@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "./node_modules/.bin/webpack -d"
+    "build": "./node_modules/.bin/webpack -d --watch"
   },
   "repository": {
     "type": "git",
