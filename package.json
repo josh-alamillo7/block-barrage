@@ -11,9 +11,12 @@
     "react-dom": "^16.4.0",
     "webpack": "^4.10.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "webpack-cli": "^3.0.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/webpack -d"
   },
   "repository": {
     "type": "git",
