@@ -1,6 +1,15 @@
-.gridContainer {
+body {
+  background-image: url("clouds.jpg");
+}
 
+.gameHeader {
   
+}
+
+.gridContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .square {
