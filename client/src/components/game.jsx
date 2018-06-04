@@ -1,6 +1,6 @@
 import React from 'react';
 import reactDOM from 'react-dom';
-import {initializeGrid} from '../../lib/helpers.js';
+import {initializeGrid, genNewBlock} from '../../lib/helpers.js';
 import Grid from './grid.jsx'
 
 class Game extends React.Component {
@@ -18,9 +18,24 @@ class Game extends React.Component {
       },
       grid: initializeGrid(this.height, this.width),
       score: 0,
-      action: 'dropping'
+      action: 'creating'
     }
   }
+
+  componentDidMount() {
+    this.handleAction()
+  }
+
+  handleAction() {
+    let newInfo = genNewBlock(this.state.grid, this.width)
+    this.setState({
+      currentBlock: newInfo.newBlock,
+      grid: newInfo.grid,
+      action: newInfo.action
+    })
+  }
+
+
 
   //gen new block method.
   //this should be called if no block exists.

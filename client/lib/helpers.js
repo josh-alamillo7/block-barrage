@@ -32,7 +32,6 @@ const genNewBlock = (grid, width) => {
 
   while (Object.keys(checked).length < width) {
     randomColumn = Math.floor(Math.random() * width)
-    console.log(randomColumn)
     if (grid[[3,randomColumn]] === 'silver') {
       newBlock['column'] = randomColumn
       newBlock['secBlockPosition'] = 2

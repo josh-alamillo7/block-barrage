@@ -1,5 +1,9 @@
-.gameHeader {
+body {
+  background-image: url("clouds.jpg");
+}
 
+.gameHeader {
+  
 }
 
 .gridContainer {
