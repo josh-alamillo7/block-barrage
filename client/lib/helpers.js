@@ -15,7 +15,6 @@ const initializeGrid = (height, width) => {
 }
 
 const placeBlockOnGrid = (grid, column, newBlock, colorOne, colorTwo) => {
-  console.log('this was called')
   newBlock['colorOne'] = colorOne;
   newBlock['colorTwo'] = colorTwo;
   grid[[0,column]] = colorOne;
