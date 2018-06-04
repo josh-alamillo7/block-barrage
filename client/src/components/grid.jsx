@@ -14,7 +14,7 @@ const Grid = ( {grid, height, width} ) => {
   }
 
   return allRows.map((row) => {
-    return (<div><Column grid={grid} row={row} allColumns={allColumns} /></div>)
+    return (<div className='row'><Column grid={grid} row={row} allColumns={allColumns} /></div>)
   })
 }
 

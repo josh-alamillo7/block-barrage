@@ -25,7 +25,9 @@ class Game extends React.Component {
     return (
       <div>
         <h1 className = "gameHeader">Block Barrage</h1>
-        <Grid grid={this.state.grid} height={this.height} width={this.width} />
+        <div className = "gridContainer">
+          <Grid grid={this.state.grid} height={this.height} width={this.width} />
+        </div>
       </div>
       );
   }

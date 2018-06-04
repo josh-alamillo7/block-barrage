@@ -1,0 +1,15 @@
+.gridContainer {
+
+  
+}
+
+.square {
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.row {
+  width: 240px;
+  height: 30px;
+}
