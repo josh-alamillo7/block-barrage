@@ -7,7 +7,7 @@ const initializeGrid = (height, width) => {
 
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
-      output[[i, j]] = 'grey'
+      output[[i, j]] = 'silver'
     }
   }
 
@@ -33,7 +33,7 @@ const genNewBlock = (grid, width) => {
   while (Object.keys(checked).length < width) {
     randomColumn = Math.floor(Math.random() * width)
     console.log(randomColumn)
-    if (grid[[3,randomColumn]] === 'grey') {
+    if (grid[[3,randomColumn]] === 'silver') {
       newBlock['column'] = randomColumn
       newBlock['secBlockPosition'] = 2
       break
