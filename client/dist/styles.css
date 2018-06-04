@@ -1,6 +1,11 @@
-.gridContainer {
+.gameHeader {
 
-  
+}
+
+.gridContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .square {

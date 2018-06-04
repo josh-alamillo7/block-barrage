@@ -5,6 +5,8 @@ const Grid = ( {grid, height, width} ) => {
   const allRows = []
   const allColumns = []
 
+  
+
   for (let i = 0; i < height; i++) {
     allRows.push(i)
   }
