@@ -1,5 +1,5 @@
 const helpers = require('./helpers')
-const {threeColumnsFilledGrid, allColumnsFilledGrid} = require('./sampleGrids')
+const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnHalfFilledGrid} = require('./sampleGrids')
 
 test('TEST: returnMe returns the value put in', () => {
   expect(helpers.return('me')).toBe('me')

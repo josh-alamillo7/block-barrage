@@ -23,6 +23,11 @@ const placeBlockOnGrid = (grid, column, newBlock, colorOne, colorTwo) => {
   grid[[3,column]] = colorTwo;
 }
 
+const checkIfBlockCanDrop = (grid, column, lowestRow) => {
+  let rowToCheck = lowestRow + 1
+  return grid[[rowToCheck,column]] === 'grey'
+}
+
 const genNewBlock = (grid, width) => {
   //choose a random column and check its color
   let checked = {};
@@ -66,6 +71,21 @@ const genNewBlock = (grid, width) => {
     newBlock: newBlock,
     action: 'drop'
   }
+}
+
+const dropBlock = (grid, currentBlock) => {
+
+  const blockColumn = currentBlock['column'];
+  const lowestRow = currentBlock['secBlockPosition'];
+
+  if (!checkIfBlockCanDrop) {
+    return {
+      grid: grid,
+      currentBlock: currentBlock,
+      action: 'score'
+    }
+  }
+
 }
 
 module.exports.return = returnMe;

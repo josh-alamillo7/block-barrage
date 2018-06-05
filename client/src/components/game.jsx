@@ -18,7 +18,7 @@ class Game extends React.Component {
       },
       grid: initializeGrid(this.height, this.width),
       score: 0,
-      action: 'creating'
+      action: 'create'
     }
   }
 
