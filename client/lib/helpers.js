@@ -14,13 +14,33 @@ const initializeGrid = (height, width) => {
   return output
 }
 
-const placeBlockOnGrid = (grid, column, newBlock, colorOne, colorTwo) => {
+const createBlockOnTop = (grid, column, newBlock, colorOne, colorTwo) => {
   newBlock['colorOne'] = colorOne;
   newBlock['colorTwo'] = colorTwo;
   grid[[0,column]] = colorOne;
   grid[[1,column]] = colorOne;
   grid[[2,column]] = colorTwo;
   grid[[3,column]] = colorTwo;
+}
+
+const placeBlockAtPosition = (grid, block) => {
+
+  grid[[block.secBlockPosition - 3,block.column]] = block.colorOne;
+  grid[[block.secBlockPosition - 2,block.column]] = block.colorOne;
+  grid[[block.secBlockPosition - 1,block.column]] = block.colorTwo;
+  grid[[block.secBlockPosition,block.column]] = block.colorTwo;
+}
+
+const lowerBlockOneSpot = (grid, block) => {
+  grid[[block.secBlockPosition - 3,block.column]] = 'silver';
+  grid[[block.secBlockPosition - 1,block.column]] = block.colorOne;
+  grid[[block.secBlockPosition + 1,block.column]] = block.colorTwo;
+  block.secBlockPosition += 1
+}
+
+const checkIfBlockCanDrop = (grid, column, lowestRow) => {
+  let rowToCheck = lowestRow + 1
+  return grid[[rowToCheck,column]] === 'silver'
 }
 
 const genNewBlock = (grid, width) => {
@@ -59,7 +79,7 @@ const genNewBlock = (grid, width) => {
     }
   }
 
-  placeBlockOnGrid(grid, randomColumn, newBlock, colorOne, colorTwo)
+  createBlockOnTop(grid, randomColumn, newBlock, colorOne, colorTwo)
 
   return {
     grid: grid,
@@ -68,6 +88,31 @@ const genNewBlock = (grid, width) => {
   }
 }
 
+const dropBlock = (grid, currentBlock) => {
+
+  const blockColumn = currentBlock['column'];
+  const lowestRow = currentBlock['secBlockPosition'];
+
+  if (!checkIfBlockCanDrop(grid, blockColumn, lowestRow)) {
+    return {
+      grid: grid,
+      currentBlock: currentBlock,
+      action: 'score'
+    }
+  }
+
+  lowerBlockOneSpot(grid, currentBlock);
+
+  return {
+    grid: grid,
+    currentBlock: currentBlock,
+    action: 'drop'
+  }
+
+}
+
 module.exports.return = returnMe;
 module.exports.initializeGrid = initializeGrid;
 module.exports.genNewBlock = genNewBlock;
+module.exports.placeBlockAtPosition = placeBlockAtPosition;
+module.exports.dropBlock = dropBlock;
