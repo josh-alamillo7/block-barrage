@@ -11,8 +11,8 @@ const fillColumn = (grid, height, column) => {
   }
 }
 
-const fillColumnHalfway = (grid, height, column) => {
-  for (let x = height/2; x < height; x++) {
+const fillColumnAlmostHalfway = (grid, height, column) => {
+  for (let x = height/2 + 1; x < height; x++) {
     grid[[x,column]] = 'green'
   }
 }
@@ -22,10 +22,9 @@ for (let y = 0; y < 3; y++) {
   fillColumn(secondGrid, startingGridHeight, y)
 }
 
-fillColumnHalfway(thirdGrid, startingGridHeight, 0)
-
 fillColumn(secondGrid, startingGridHeight, 3)
+fillColumnAlmostHalfway(thirdGrid, startingGridHeight, 0)
 
 module.exports.threeColumnsFilledGrid = firstGrid;
 module.exports.allColumnsFilledGrid = secondGrid;
-module.exports.firstColumnHalfFilledGrid = thirdGrid;
+module.exports.firstColumnAlmostHalfFilledGrid = thirdGrid;
