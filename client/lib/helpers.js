@@ -32,13 +32,14 @@ const placeBlockAtPosition = (grid, block) => {
 }
 
 const lowerBlockOneSpot = (grid, block) => {
-  grid[[block.secBlockPosition - 3,block.column]] = 'silver';
-  grid[[block.secBlockPosition - 1,block.column]] = block.colorOne;
-  grid[[block.secBlockPosition + 1,block.column]] = block.colorTwo;
+  grid[[block.secBlockPosition - 2,block.column]] = 'silver';
+  grid[[block.secBlockPosition,block.column]] = block.colorOne;
+  grid[[block.secBlockPosition + 2,block.column]] = block.colorTwo;
   block.secBlockPosition += 1
 }
 
 const checkIfBlockCanDrop = (grid, column, lowestRow) => {
+  
   let rowToCheck = lowestRow + 1
   return grid[[rowToCheck,column]] === 'silver'
 }
@@ -91,9 +92,10 @@ const genNewBlock = (grid, width) => {
 const dropBlock = (grid, currentBlock) => {
 
   const blockColumn = currentBlock['column'];
-  const lowestRow = currentBlock['secBlockPosition'];
+  const lowestRow = currentBlock['secBlockPosition'] + 1;
 
   if (!checkIfBlockCanDrop(grid, blockColumn, lowestRow)) {
+    console.log("cannot drop", grid, currentBlock, lowestRow)
     return {
       grid: grid,
       currentBlock: currentBlock,
