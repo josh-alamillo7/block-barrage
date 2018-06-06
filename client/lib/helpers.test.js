@@ -80,6 +80,6 @@ test('dropBlock should return the same grid, same block, and a "score" action in
   expect(dropResult.grid[[0,0]]).toBe('silver')
   expect(dropResult.grid[[2,0]]).toBe('red')
   expect(dropResult.grid[[4,0]]).toBe('yellow')
-  expect(dropResult.currentBlock.secBlockPosition).toBe(4)
+  expect(dropResult.currentBlock.secBlockPosition).toBe(3)
   expect(dropResult.action).toBe('drop')
 })
