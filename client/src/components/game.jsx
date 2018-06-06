@@ -1,6 +1,6 @@
 import React from 'react';
 import reactDOM from 'react-dom';
-import {initializeGrid, genNewBlock} from '../../lib/helpers.js';
+import {initializeGrid, genNewBlock, dropBlock} from '../../lib/helpers.js';
 import Grid from './grid.jsx'
 
 class Game extends React.Component {
@@ -23,20 +23,30 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    this.handleAction()
+    setInterval(this.handleAction.bind(this), 200)
   }
 
   handleAction() {
-    let newInfo = genNewBlock(this.state.grid, this.width)
-    this.setState({
-      currentBlock: newInfo.newBlock,
-      grid: newInfo.grid,
-      action: newInfo.action
-    })
+    const app = this;
+    switch(app.state.action) {
+      case 'create':
+        let newInfo = genNewBlock(app.state.grid, app.width)
+        app.setState({
+          currentBlock: newInfo.newBlock,
+          grid: newInfo.grid,
+          action: newInfo.action
+        })
+        break
+      case 'drop':
+        let postDropInfo = dropBlock(app.state.grid, app.state.currentBlock)
+        app.setState({
+          grid: postDropInfo.grid,
+          currentBlock: postDropInfo.currentBlock,
+          action: postDropInfo.action
+        })
+        break
+    }    
   }
-
-
-
   //gen new block method.
   //this should be called if no block exists.
   //it needs to find a free column and set the state to that column.
