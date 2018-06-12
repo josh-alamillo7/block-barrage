@@ -128,6 +128,49 @@ const dropBlock = (grid, currentBlock) => {
 
 }
 
+const Queue = function() {
+  this.storage = {};
+  this.addIndex = 0;
+  this.removeIndex = 0;
+  this.size = 0;
+}
+
+Queue.prototype.enqueue = function(value) {
+  this.storage[this.addIndex] = value;
+  this.addIndex++
+  this.size++
+}
+
+Queue.prototype.dequeue = function() {
+  if (this.removeIndex === this.addIndex && this.size > 0) {
+    removedValue = this.storage[this.removeIndex];
+    this.size--;
+    delete this.storage[this.removeIndex];
+    return removedValue
+  } else if (this.size > 0) {
+    removedValue = this.storage[this.removeIndex];
+    this.size--;
+    delete this.storage[this.removeIndex];
+    this.removeIndex++
+    return removedValue
+  }
+}
+
+
+const scoreGrid = (grid, multiplier, droppedBlocks) => {
+
+  checkedPositions = {};
+  let score = 0;
+  let color = 0;
+
+  //block should be in the format row, column
+  droppedBlocks.forEach(block => {
+    color = grid[[block[0],block[1]]]
+
+  })
+
+}
+
 module.exports.return = returnMe;
 module.exports.initializeGrid = initializeGrid;
 module.exports.genNewBlock = genNewBlock;

@@ -1,6 +1,6 @@
 const helpers = require('./helpers')
 const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnAlmostHalfFilledGrid, 
-  nonMatchingBottomTwoRowsGrid, prettyGridPrint} = require('./sampleGrids')
+  nonMatchingBottomTwoRowsGrid} = require('./sampleGrids')
 const {topLeftBlock, middleLeftBlock, bottomRightBlock, nonMatchingTopLeftBlock} = require('./sampleBlocks')
 
 
@@ -86,7 +86,7 @@ test('scoreGrid should return the same score and a "create" action if there are 
   let testGrid = Object.assign({}, nonMatchingBottomTwoRowsGrid)
   helpers.placeBlockAtPosition(testGrid, nonMatchingTopLeftBlock);
 
-  prettyGridPrint(testGrid, 8, 4)
+  helpers.prettyGridPrint(testGrid, 8, 4)
 
   expect(1).toBe(1)
 })
