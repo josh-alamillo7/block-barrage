@@ -1,6 +1,6 @@
 import React from 'react';
 import reactDOM from 'react-dom';
-import {initializeGrid, genNewBlock, dropBlock} from '../../lib/helpers.js';
+import {initializeGrid, genNewBlock, dropBlock, scoreGrid} from '../../lib/helpers.js';
 import Grid from './grid.jsx'
 
 class Game extends React.Component {
@@ -17,11 +17,11 @@ class Game extends React.Component {
         secBlockPosition: null,
       },
       grid: initializeGrid(this.height, this.width),
+      droppedBlocks: [],
       scoreInfo: {
         crushDisplays: {},
         multiplier: 1,
         totalScore: 0,
-        positionsToCheck: []
       },
       action: 'create'
     }
@@ -47,7 +47,17 @@ class Game extends React.Component {
         app.setState({
           grid: postDropInfo.grid,
           currentBlock: postDropInfo.currentBlock,
-          action: postDropInfo.action
+          action: postDropInfo.action,
+          droppedBlocks: postDropInfo.droppedBlocks
+        })
+        break
+      case 'score':
+        let postScoreInfo = scoreGrid(app.state.grid, app.state.scoreInfo.multiplier, app.state.droppedBlocks, app.state.scoreInfo.totalScore)
+        app.setState({
+          grid: postScoreInfo.grid,
+          scoreInfo: postScoreInfo.scoreInfo,
+          action: postScoreInfo.action,
+          droppedBlocks: postScoreInfo.droppedBlocks
         })
         break
     }    
