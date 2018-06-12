@@ -171,43 +171,36 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
   }
 
   const checkedPositions = {};
-  const removedPositions = [];
-  let score;
-  let color;
-  let rowValue;
-  let colValue;
-  let queue;
-  let currPosition;
+  let removals = [];
+  let score, color, rowValue, colValue, queue, currPosition, potentialRemovals;
 
   const outputScoreInfo = droppedBlocks.map(block => {
     color = grid[[block.firstPos,block.column]];
     score = 0;
     queue = new Queue();
-    if (block.firstPos !== block.lastPos) {
-      if (checkedPositions[[block.lastPos, block.column]] !== true) {
-        queue.enqueue([block.lastPos, block.column])
-        checkedPositions[[block.lastPos, block.column]] = true;
-      } 
-    }
-    if (checkedPositions[[block.firstPos, block.column]] !== true) {
-      queue.enqueue([block.firstPos, block.column])
-      checkedPositions[[block.firstPos, block.column]] = true;
-    }
+    potentialRemovals = [];
+    // if (block.firstPos !== block.lastPos) {
+    if (checkedPositions[[block.lastPos, block.column]] !== true) {
+      queue.enqueue([block.lastPos, block.column])
+      checkedPositions[[block.lastPos, block.column]] = true;
+    } 
+    // }
+    // if (checkedPositions[[block.firstPos, block.column]] !== true) {
+    //   queue.enqueue([block.firstPos, block.column])
+    //   checkedPositions[[block.firstPos, block.column]] = true;
+    // }
     if (grid[[block.lastPos + 1, block.column]] === color) {
       score ++
-      console.log(color, 'upscore')
+      console.log(color, 'bottom match upscore')
     }
     while (queue.size > 0) {
       currPosition = queue.dequeue()
+      potentialRemovals.push(currPosition)
       checkedPositions[currPosition] = true;
       rowValue = currPosition[0];
       colValue = currPosition[1];
       // console.log("CURRPOSITION", currPosition, "BOTTOM", grid[[rowValue + 1, colValue]], "TOP", grid[[rowValue - 1, colValue]])
 
-      if (grid[[rowValue + 1, colValue]] === color && checkedPositions[[rowValue + 1, colValue]] !== true) {
-        queue.enqueue([rowValue + 1, colValue])
-        checkedPositions[[rowValue + 1, colValue]] = true
-      }
       if (grid[[rowValue, colValue + 1]] === color && checkedPositions[[rowValue, colValue + 1]] !== true) {
         score++;
         queue.enqueue([rowValue, colValue + 1])
@@ -222,14 +215,22 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
         queue.enqueue([rowValue, colValue - 1])
         checkedPositions[[rowValue, colValue - 1]] = true
       }      
+      if (grid[[rowValue + 1, colValue]] === color && checkedPositions[[rowValue + 1, colValue]] !== true) {
+        queue.enqueue([rowValue + 1, colValue])
+        checkedPositions[[rowValue + 1, colValue]] = true
+      }
+    }
+    if (score > 0) {
+      removals = removals.concat(potentialRemovals)
     }
     return {
       color: color,
       score: score
     }
+
   })
 
-  console.log(outputScoreInfo)
+  console.log("REMOVALS", removals)
 
   //delete all checked positions
 

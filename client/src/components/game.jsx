@@ -28,7 +28,7 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(this.handleAction.bind(this), 200)
+    setInterval(this.handleAction.bind(this), 250)
   }
 
   handleAction() {
