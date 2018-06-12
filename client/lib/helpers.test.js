@@ -1,7 +1,7 @@
 const helpers = require('./helpers')
 const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnAlmostHalfFilledGrid, 
   nonMatchingBottomTwoRowsGrid} = require('./sampleGrids')
-const {topLeftBlock, middleLeftBlock, bottomRightBlock, nonMatchingTopLeftBlock} = require('./sampleBlocks')
+const {topLeftBlock, middleLeftBlock, bottomRightBlock, nonMatchingTopLeftBlock, matchingTopLeftBlock} = require('./sampleBlocks')
 
 
 
@@ -47,25 +47,25 @@ test('genNewBlock should return the same grid, no block, and a game over state i
   expect(resultAction).toBe('gameOver')
 })
 
-test('dropBlock should return the same grid, same block, and a "score" action in the state if the block has a block below it', () => {
+test('dropBlock should return the same grid, no block, and a "score" action in the state if the block has a block below it', () => {
   let testGrid = Object.assign({}, firstColumnAlmostHalfFilledGrid)
   helpers.placeBlockAtPosition(testGrid, middleLeftBlock)
 
   let dropResult = helpers.dropBlock(testGrid, middleLeftBlock)
 
   expect(dropResult.grid).toEqual(testGrid)
-  expect(dropResult.currentBlock).toEqual(middleLeftBlock)
+  expect(dropResult.currentBlock.column).toEqual(null)
   expect(dropResult.action).toEqual('score')
 })
 
-test('dropBlock should return the same grid, same block, and a "score" action in the state if the block hits the bottom of the grid', () => {
+test('dropBlock should return the same grid, no block, and a "score" action in the state if the block hits the bottom of the grid', () => {
   let testGrid = Object.assign({}, firstColumnAlmostHalfFilledGrid);
   helpers.placeBlockAtPosition(testGrid, bottomRightBlock);
 
   let dropResult = helpers.dropBlock(testGrid, bottomRightBlock);
 
   expect(dropResult.grid).toEqual(testGrid);
-  expect(dropResult.currentBlock).toEqual(bottomRightBlock);
+  expect(dropResult.currentBlock.column).toEqual(null);
   expect(dropResult.action).toEqual('score');
 })
 
@@ -88,5 +88,22 @@ test('scoreGrid should return the same score and a "create" action if there are 
 
   helpers.prettyGridPrint(testGrid, 8, 4)
 
-  expect(1).toBe(1)
+  let nonMatchResult = helpers.scoreGrid(testGrid, 1, [{color: 'blue', column: 0, firstPos: 0, lastPos: 1},
+    {color: 'green', column: 0, firstPos: 2, lastPos: 3}], 4)
+
+  expect(nonMatchResult.scoreInfo.totalScore).toBe(4);
+  expect(nonMatchResult.droppedBlocks.length).toBe(0);
+  expect(nonMatchResult.action).toBe('create');
 })
+
+test('scoreGrid should return ??? if there are scoring positions', () => {
+  let testGrid = Object.assign({}, nonMatchingBottomTwoRowsGrid)
+  helpers.placeBlockAtPosition(testGrid, matchingTopLeftBlock);
+
+  // helpers.prettyGridPrint(testGrid, 8, 4)
+
+  let matchResult = helpers.scoreGrid(testGrid, 1, [{color: 'green', column: 0, firstPos: 0, lastPos: 1},
+    {color: 'blue', column: 0, firstPos: 2, lastPos: 3}], 4)
+
+  expect(1).toBe(1);
+}) 

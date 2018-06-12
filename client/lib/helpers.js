@@ -113,7 +113,12 @@ const dropBlock = (grid, currentBlock) => {
   if (!checkIfBlockCanDrop(grid, blockColumn, lowestRow)) {
     return {
       grid: grid,
-      currentBlock: currentBlock,
+      currentBlock: {colorOne: null,
+        colorTwo: null,
+        column: null,
+        secBlockPosition: null},
+      droppedBlocks: [{color: currentBlock.colorOne, column: blockColumn, firstPos: lowestRow - 3, lastPos: lowestRow - 2}, 
+      {color: currentBlock.colorTwo, column: blockColumn, firstPos: lowestRow - 1, lastPos: lowestRow}],
       action: 'score'
     }
   }
@@ -123,51 +128,131 @@ const dropBlock = (grid, currentBlock) => {
   return {
     grid: grid,
     currentBlock: currentBlock,
+    droppedBlocks: [],
     action: 'drop'
   }
 
 }
 
-const Queue = function() {
-  this.storage = {};
-  this.addIndex = 0;
-  this.removeIndex = 0;
-  this.size = 0;
-}
 
-Queue.prototype.enqueue = function(value) {
-  this.storage[this.addIndex] = value;
-  this.addIndex++
-  this.size++
-}
 
-Queue.prototype.dequeue = function() {
-  if (this.removeIndex === this.addIndex && this.size > 0) {
-    removedValue = this.storage[this.removeIndex];
-    this.size--;
-    delete this.storage[this.removeIndex];
-    return removedValue
-  } else if (this.size > 0) {
-    removedValue = this.storage[this.removeIndex];
-    this.size--;
-    delete this.storage[this.removeIndex];
-    this.removeIndex++
-    return removedValue
+
+const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
+
+  console.log(droppedBlocks[0])
+  console.log(droppedBlocks[1])
+
+  const Queue = function() {
+    this.storage = {};
+    this.addIndex = 0;
+    this.removeIndex = 0;
+    this.size = 0;
   }
-}
 
+  Queue.prototype.enqueue = function(value) {
+    this.storage[this.addIndex] = value;
+    this.addIndex++
+    this.size++
+  }
 
-const scoreGrid = (grid, multiplier, droppedBlocks) => {
+  Queue.prototype.dequeue = function() {
+    if (this.removeIndex === this.addIndex && this.size > 0) {
+      const removedValue = this.storage[this.removeIndex];
+      this.size--;
+      delete this.storage[this.removeIndex];
+      return removedValue
+    } else if (this.size > 0) {
+      const removedValue = this.storage[this.removeIndex];
+      this.size--;
+      delete this.storage[this.removeIndex];
+      this.removeIndex++
+      return removedValue
+    }
+  }
 
-  checkedPositions = {};
-  let score = 0;
-  let color = 0;
+  const checkedPositions = {};
+  const removedPositions = [];
+  let score;
+  let color;
+  let rowValue;
+  let colValue;
+  let queue;
+  let currPosition;
 
-  //block should be in the format row, column
-  droppedBlocks.forEach(block => {
-    color = grid[[block[0],block[1]]]
+  const outputScoreInfo = droppedBlocks.map(block => {
+    color = grid[[block.firstPos,block.column]];
+    score = 0;
+    queue = new Queue();
+    if (block.firstPos !== block.lastPos) {
+      if (checkedPositions[[block.lastPos, block.column]] !== true) {
+        queue.enqueue([block.lastPos, block.column])
+        checkedPositions[[block.lastPos, block.column]] = true;
+      } 
+    }
+    if (checkedPositions[[block.firstPos, block.column]] !== true) {
+      queue.enqueue([block.firstPos, block.column])
+      checkedPositions[[block.firstPos, block.column]] = true;
+    }
+    if (grid[[block.lastPos + 1, block.column]] === color) {
+      score ++
+      console.log(color, 'upscore')
+    }
+    while (queue.size > 0) {
+      currPosition = queue.dequeue()
+      checkedPositions[currPosition] = true;
+      rowValue = currPosition[0];
+      colValue = currPosition[1];
+      // console.log("CURRPOSITION", currPosition, "BOTTOM", grid[[rowValue + 1, colValue]], "TOP", grid[[rowValue - 1, colValue]])
 
+      if (grid[[rowValue + 1, colValue]] === color && checkedPositions[[rowValue + 1, colValue]] !== true) {
+        queue.enqueue([rowValue + 1, colValue])
+        checkedPositions[[rowValue + 1, colValue]] = true
+      }
+      if (grid[[rowValue, colValue + 1]] === color && checkedPositions[[rowValue, colValue + 1]] !== true) {
+        score++;
+        queue.enqueue([rowValue, colValue + 1])
+        checkedPositions[[rowValue, colValue + 1]] = true
+      }
+      if (grid[[rowValue - 1, colValue]] === color && checkedPositions[[rowValue - 1, colValue]] !== true) {
+        queue.enqueue([rowValue - 1, colValue])
+        checkedPositions[[rowValue - 1, colValue]] = true
+      }
+      if (grid[[rowValue, colValue - 1]] === color && checkedPositions[[rowValue, colValue - 1]] !== true) {
+        score++;
+        queue.enqueue([rowValue, colValue - 1])
+        checkedPositions[[rowValue, colValue - 1]] = true
+      }      
+    }
+    return {
+      color: color,
+      score: score
+    }
   })
+
+  console.log(outputScoreInfo)
+
+  //delete all checked positions
+
+  const addScore = outputScoreInfo.reduce((acc, item) => {
+    return acc + item.score
+  }, 0)
+
+  console.log("score", addScore)
+
+  if (addScore === 0) {
+    return {
+      grid: grid,
+      scoreInfo: {
+        crushDisplays: {},
+        multiplier: 1,
+        totalScore: currentScore,
+      },
+      droppedBlocks: [],
+      action: 'create'
+    }
+  } else {
+    console.log('no longer zero')
+  } 
 
 }
 
@@ -177,3 +262,4 @@ module.exports.genNewBlock = genNewBlock;
 module.exports.placeBlockAtPosition = placeBlockAtPosition;
 module.exports.dropBlock = dropBlock;
 module.exports.prettyGridPrint = prettyGridPrint;
+module.exports.scoreGrid = scoreGrid;
