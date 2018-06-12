@@ -17,7 +17,12 @@ class Game extends React.Component {
         secBlockPosition: null,
       },
       grid: initializeGrid(this.height, this.width),
-      score: 0,
+      scoreInfo: {
+        crushDisplays: {},
+        multiplier: 1,
+        totalScore: 0,
+        positionsToCheck: []
+      },
       action: 'create'
     }
   }
@@ -47,14 +52,6 @@ class Game extends React.Component {
         break
     }    
   }
-  //gen new block method.
-  //this should be called if no block exists.
-  //it needs to find a free column and set the state to that column.
-  //secBlockPosition will always be set to 1.
-
-  //drop method.
-  //if no block exists, it should create a random one and initialize it to a random available column.
-
 
   render() {
     return (

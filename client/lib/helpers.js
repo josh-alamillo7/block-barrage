@@ -95,7 +95,6 @@ const dropBlock = (grid, currentBlock) => {
   const lowestRow = currentBlock['secBlockPosition'] + 1;
 
   if (!checkIfBlockCanDrop(grid, blockColumn, lowestRow)) {
-    console.log("cannot drop", grid, currentBlock, lowestRow)
     return {
       grid: grid,
       currentBlock: currentBlock,

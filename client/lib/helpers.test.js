@@ -1,5 +1,5 @@
 const helpers = require('./helpers')
-const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnAlmostHalfFilledGrid} = require('./sampleGrids')
+const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnAlmostHalfFilledGrid, nonMatchingBottomTwoRowsGrid} = require('./sampleGrids')
 const {topLeftBlock, middleLeftBlock, bottomRightBlock} = require('./sampleBlocks')
 
 test('TEST: returnMe returns the value put in', () => {
@@ -44,11 +44,6 @@ test('genNewBlock should return the same grid, no block, and a game over state i
   expect(resultAction).toBe('gameOver')
 })
 
-// test('dropBlock should return the same grid, same block, and a "score" action in the state if the block is at the bottom of the grid', () => {
-//   let testGrid = Object.assign({}, firstColumnAlmostHalfFilledGrid)
-//   helpers.placeBlockAtPosition(testGrid, )
-// })
-
 test('dropBlock should return the same grid, same block, and a "score" action in the state if the block has a block below it', () => {
   let testGrid = Object.assign({}, firstColumnAlmostHalfFilledGrid)
   helpers.placeBlockAtPosition(testGrid, middleLeftBlock)
@@ -61,25 +56,34 @@ test('dropBlock should return the same grid, same block, and a "score" action in
 })
 
 test('dropBlock should return the same grid, same block, and a "score" action in the state if the block hits the bottom of the grid', () => {
-  let testGrid = Object.assign({}, firstColumnAlmostHalfFilledGrid)
-  helpers.placeBlockAtPosition(testGrid, bottomRightBlock)
+  let testGrid = Object.assign({}, firstColumnAlmostHalfFilledGrid);
+  helpers.placeBlockAtPosition(testGrid, bottomRightBlock);
 
-  let dropResult = helpers.dropBlock(testGrid, bottomRightBlock)
+  let dropResult = helpers.dropBlock(testGrid, bottomRightBlock);
 
-  expect(dropResult.grid).toEqual(testGrid)
-  expect(dropResult.currentBlock).toEqual(bottomRightBlock)
-  expect(dropResult.action).toEqual('score')
+  expect(dropResult.grid).toEqual(testGrid);
+  expect(dropResult.currentBlock).toEqual(bottomRightBlock);
+  expect(dropResult.action).toEqual('score');
 })
 
-test('dropBlock should return the same grid, same block, and a "score" action in the state if the block hits the bottom of the grid', () => {
-  let testGrid = Object.assign({}, firstColumnAlmostHalfFilledGrid)
-  helpers.placeBlockAtPosition(testGrid, topLeftBlock)
+test('dropBlock should return a grid with the block dropped and a "drop" action in the state if the block has no block below it', () => {
+  let testGrid = Object.assign({}, firstColumnAlmostHalfFilledGrid);
+  helpers.placeBlockAtPosition(testGrid, topLeftBlock);
 
-  let dropResult = helpers.dropBlock(testGrid, topLeftBlock)
+  let dropResult = helpers.dropBlock(testGrid, topLeftBlock);
 
-  expect(dropResult.grid[[0,0]]).toBe('silver')
-  expect(dropResult.grid[[2,0]]).toBe('red')
-  expect(dropResult.grid[[4,0]]).toBe('yellow')
-  expect(dropResult.currentBlock.secBlockPosition).toBe(3)
-  expect(dropResult.action).toBe('drop')
+  expect(dropResult.grid[[0,0]]).toBe('silver');
+  expect(dropResult.grid[[2,0]]).toBe('red');
+  expect(dropResult.grid[[4,0]]).toBe('yellow');
+  expect(dropResult.currentBlock.secBlockPosition).toBe(3);
+  expect(dropResult.action).toBe('drop');
+})
+
+test('scoreGrid should return the same score and a "create" action if there are no scoring positions', () => {
+  let testGrid = Object.assign({}, nonMatchingBottomTwoRowsGrid)
+  helpers.placeBlockAtPosition(testGrid, topLeftBlock);
+
+  console.log(testGrid)
+
+  expect(testGrid).toBe('idk')
 })
