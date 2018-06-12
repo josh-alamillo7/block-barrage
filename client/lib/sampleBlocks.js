@@ -19,6 +19,22 @@ const bottomRightBlock = {
   secBlockPosition: 6
 }
 
+const nonMatchingTopLeftBlock = {
+  colorOne: 'blue',
+  colorTwo: 'green',
+  column: 0,
+  secBlockPosition: 2
+}
+
+const matchingTopLeftBlock = {
+  colorOne: 'green',
+  colorTwo: 'blue',
+  column: 0,
+  secBlockPosition: 2
+}
+
 module.exports.topLeftBlock = topLeftBlock;
 module.exports.middleLeftBlock = middleLeftBlock;
 module.exports.bottomRightBlock = bottomRightBlock;
+module.exports.nonMatchingTopLeftBlock = nonMatchingTopLeftBlock;
+module.exports.matchingTopLeftBlock = matchingTopLeftBlock;
