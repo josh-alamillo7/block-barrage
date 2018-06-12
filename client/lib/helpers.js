@@ -14,6 +14,22 @@ const initializeGrid = (height, width) => {
   return output
 }
 
+const prettyGridPrint = (grid, height, width) => {
+  let string = ''
+
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
+      string += ' ' + grid[[i,j]]
+    }
+    string += '\n'
+    if (i % 2 === 1) {
+      string += '------------------\n'
+    }
+  }
+
+  console.log(string)
+}
+
 const createBlockOnTop = (grid, column, newBlock, colorOne, colorTwo) => {
   newBlock['colorOne'] = colorOne;
   newBlock['colorTwo'] = colorTwo;
@@ -25,10 +41,10 @@ const createBlockOnTop = (grid, column, newBlock, colorOne, colorTwo) => {
 
 const placeBlockAtPosition = (grid, block) => {
 
-  grid[[block.secBlockPosition - 3,block.column]] = block.colorOne;
   grid[[block.secBlockPosition - 2,block.column]] = block.colorOne;
-  grid[[block.secBlockPosition - 1,block.column]] = block.colorTwo;
+  grid[[block.secBlockPosition - 1,block.column]] = block.colorOne;
   grid[[block.secBlockPosition,block.column]] = block.colorTwo;
+  grid[[block.secBlockPosition + 1,block.column]] = block.colorTwo;
 }
 
 const lowerBlockOneSpot = (grid, block) => {
@@ -117,3 +133,4 @@ module.exports.initializeGrid = initializeGrid;
 module.exports.genNewBlock = genNewBlock;
 module.exports.placeBlockAtPosition = placeBlockAtPosition;
 module.exports.dropBlock = dropBlock;
+module.exports.prettyGridPrint = prettyGridPrint;

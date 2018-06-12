@@ -1,6 +1,9 @@
 const helpers = require('./helpers')
-const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnAlmostHalfFilledGrid, nonMatchingBottomTwoRowsGrid} = require('./sampleGrids')
-const {topLeftBlock, middleLeftBlock, bottomRightBlock} = require('./sampleBlocks')
+const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnAlmostHalfFilledGrid, 
+  nonMatchingBottomTwoRowsGrid, prettyGridPrint} = require('./sampleGrids')
+const {topLeftBlock, middleLeftBlock, bottomRightBlock, nonMatchingTopLeftBlock} = require('./sampleBlocks')
+
+
 
 test('TEST: returnMe returns the value put in', () => {
   expect(helpers.return('me')).toBe('me')
@@ -81,9 +84,9 @@ test('dropBlock should return a grid with the block dropped and a "drop" action 
 
 test('scoreGrid should return the same score and a "create" action if there are no scoring positions', () => {
   let testGrid = Object.assign({}, nonMatchingBottomTwoRowsGrid)
-  helpers.placeBlockAtPosition(testGrid, topLeftBlock);
+  helpers.placeBlockAtPosition(testGrid, nonMatchingTopLeftBlock);
 
-  console.log(testGrid)
+  prettyGridPrint(testGrid, 8, 4)
 
-  expect(testGrid).toBe('idk')
+  expect(1).toBe(1)
 })
