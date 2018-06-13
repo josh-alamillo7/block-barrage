@@ -86,10 +86,8 @@ test('scoreGrid should return the same score and a "create" action if there are 
   let testGrid = Object.assign({}, nonMatchingBottomTwoRowsGrid)
   helpers.placeBlockAtPosition(testGrid, nonMatchingTopLeftBlock);
 
-  helpers.prettyGridPrint(testGrid, 8, 4)
-
   let nonMatchResult = helpers.scoreGrid(testGrid, 1, [{color: 'blue', column: 0, firstPos: 0, lastPos: 1},
-    {color: 'green', column: 0, firstPos: 2, lastPos: 3}], 4)
+    {color: 'green', column: 0, firstPos: 2, lastPos: 3}], 4, 8)
 
   expect(nonMatchResult.scoreInfo.totalScore).toBe(4);
   expect(nonMatchResult.droppedBlocks.length).toBe(0);
@@ -100,10 +98,11 @@ test('scoreGrid should return ??? if there are scoring positions', () => {
   let testGrid = Object.assign({}, nonMatchingBottomTwoRowsGrid)
   helpers.placeBlockAtPosition(testGrid, matchingTopLeftBlock);
 
-  // helpers.prettyGridPrint(testGrid, 8, 4)
+  console.log("BEFORE")
+  helpers.prettyGridPrint(testGrid, 8, 4)
 
   let matchResult = helpers.scoreGrid(testGrid, 1, [{color: 'green', column: 0, firstPos: 0, lastPos: 1},
-    {color: 'blue', column: 0, firstPos: 2, lastPos: 3}], 4)
+    {color: 'blue', column: 0, firstPos: 2, lastPos: 3}], 4, 8)
 
   expect(1).toBe(1);
 }) 

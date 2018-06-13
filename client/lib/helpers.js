@@ -134,13 +134,7 @@ const dropBlock = (grid, currentBlock) => {
 
 }
 
-
-
-
-const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
-
-  console.log(droppedBlocks[0])
-  console.log(droppedBlocks[1])
+const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
 
   const Queue = function() {
     this.storage = {};
@@ -171,6 +165,8 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
   }
 
   const checkedPositions = {};
+  const colsToProcess = [];
+  const newDroppedBlocks = [];
   let removals = [];
   let score, color, rowValue, colValue, queue, currPosition, potentialRemovals;
 
@@ -191,7 +187,6 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
     // }
     if (grid[[block.lastPos + 1, block.column]] === color) {
       score ++
-      console.log(color, 'bottom match upscore')
     }
     while (queue.size > 0) {
       currPosition = queue.dequeue()
@@ -206,15 +201,15 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
         queue.enqueue([rowValue, colValue + 1])
         checkedPositions[[rowValue, colValue + 1]] = true
       }
-      if (grid[[rowValue - 1, colValue]] === color && checkedPositions[[rowValue - 1, colValue]] !== true) {
-        queue.enqueue([rowValue - 1, colValue])
-        checkedPositions[[rowValue - 1, colValue]] = true
-      }
       if (grid[[rowValue, colValue - 1]] === color && checkedPositions[[rowValue, colValue - 1]] !== true) {
         score++;
         queue.enqueue([rowValue, colValue - 1])
         checkedPositions[[rowValue, colValue - 1]] = true
-      }      
+      } 
+      if (grid[[rowValue - 1, colValue]] === color && checkedPositions[[rowValue - 1, colValue]] !== true) {
+        queue.enqueue([rowValue - 1, colValue])
+        checkedPositions[[rowValue - 1, colValue]] = true
+      }    
       if (grid[[rowValue + 1, colValue]] === color && checkedPositions[[rowValue + 1, colValue]] !== true) {
         queue.enqueue([rowValue + 1, colValue])
         checkedPositions[[rowValue + 1, colValue]] = true
@@ -228,23 +223,68 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
       score: score
     }
 
+  }).filter(info => {
+    return info.score > 0
   })
 
-  console.log("REMOVALS", removals)
+  //delete all positions marked for removal
+  
 
-  //delete all checked positions
+  removals.forEach(removal => {
+    grid[[removal[0],removal[1]]] = 'delete me'
+    if (!colsToProcess.includes(removal[1])) {
+      colsToProcess.push(removal[1])
+    }
+  })
+
+  const moveAllColBlocksDownOne = (grid, row, column) => {
+    let currRow = row
+    while (grid[[currRow, column]] !== undefined && grid[[currRow, column]] !== 'silver') {
+      if (grid[[currRow - 1, column]] === undefined) {
+        grid[[currRow, column]] = 'silver'
+      } else {
+        grid[[currRow, column]] = grid[[currRow - 1, column]]
+      } 
+      currRow--    
+    }
+  }
+
+  const addNewDroppedBlocks = (array, row, column) => {
+    
+  }
+
+
+  colsToProcess.forEach(column => {
+    let currRow = height - 1;
+
+    while(grid[[currRow, column]] !== 'delete me' && grid[[currRow, column]] !== 'silver' && grid[[currRow, column]] !== undefined) {
+      currRow--
+    }
+
+    if (grid[[currRow, column]] !== 'silver' && grid[[currRow, column]] !== undefined) {
+      while(grid[[currRow, column]] === 'delete me') {
+        moveAllColBlocksDownOne(grid, currRow, column)
+      }
+      // findNewDroppedBlocks(newDroppedBlocks, currRow, column)
+      // currRow++
+    }
+  })
+
+  console.log("AFTER")
+  prettyGridPrint(grid, 8, 4)
+  //update the grid with new information
+  //hardest part probably: tell us which blocks will need to be considered in the next go-around.
 
   const addScore = outputScoreInfo.reduce((acc, item) => {
     return acc + item.score
   }, 0)
 
-  console.log("score", addScore)
 
   if (addScore === 0) {
     return {
       grid: grid,
       scoreInfo: {
-        crushDisplays: {},
+        crushDisplays: [],
         multiplier: 1,
         totalScore: currentScore,
       },

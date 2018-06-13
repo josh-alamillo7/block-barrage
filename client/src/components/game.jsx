@@ -19,7 +19,7 @@ class Game extends React.Component {
       grid: initializeGrid(this.height, this.width),
       droppedBlocks: [],
       scoreInfo: {
-        crushDisplays: {},
+        crushDisplays: [],
         multiplier: 1,
         totalScore: 0,
       },
@@ -52,7 +52,7 @@ class Game extends React.Component {
         })
         break
       case 'score':
-        let postScoreInfo = scoreGrid(app.state.grid, app.state.scoreInfo.multiplier, app.state.droppedBlocks, app.state.scoreInfo.totalScore)
+        let postScoreInfo = scoreGrid(app.state.grid, app.state.scoreInfo.multiplier, app.state.droppedBlocks, app.state.scoreInfo.totalScore, app.height)
         app.setState({
           grid: postScoreInfo.grid,
           scoreInfo: postScoreInfo.scoreInfo,
