@@ -111,6 +111,7 @@ test('scoreGrid should return the appropriate information for a vertical match',
   });
   expect(matchResult.droppedBlocks[0]).toEqual({
     color: 'green',
+    column: 0,
     firstPos: 4,
     lastPos: 5
   });
@@ -125,5 +126,25 @@ test('scoreGrid should return the appropriate information for a horizontal match
   console.log('horiz grid before')
   helpers.prettyGridPrint(testGrid, 8, 4)
 
-  expect(1).toBe(1)
+  let horizMatchResult = helpers.scoreGrid(testGrid, 1, [{color: 'orange', column: 1, firstPos: 0, lastPos: 1},
+    {color: 'yellow', column: 1, firstPos: 2, lastPos: 3}], 4, 8)
+
+  expect(horizMatchResult.scoreInfo.multiplier).toBe(2);
+  expect(horizMatchResult.scoreInfo.totalScore).toBe(5);
+  expect(horizMatchResult.scoreInfo.crushDisplays[0]).toEqual({
+    color: 'yellow',
+    score: 1
+  });
+  expect(horizMatchResult.droppedBlocks[0]).toEqual({
+    color: 'red',
+    column: 0,
+    firstPos: 2,
+    lastPos: 3
+  });
+  expect(horizMatchResult.droppedBlocks[1]).toEqual({
+    color: 'orange',
+    column: 1,
+    firstPos: 2,
+    lastPos: 3
+  })
 })

@@ -165,8 +165,8 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
   }
 
   const checkedPositions = {};
-  const colsToProcess = [];
   const newDroppedBlocks = [];
+  let colsToProcess = [];
   let removals = [];
   let score, color, rowValue, colValue, queue, currPosition, potentialRemovals;
 
@@ -262,6 +262,7 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
         newBlock['firstPos'] = currRow;
         newBlock['lastPos'] = currRow;
         newBlock['color'] = grid[[currRow, column]];
+        newBlock['column'] = column
         previousColor = grid[[currRow, column]];
       } else {
         newBlock['firstPos'] = currRow;
@@ -278,6 +279,7 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
     //if there is a newBlock, push it into the array
   }
 
+  colsToProcess.reverse()
 
   colsToProcess.forEach(column => {
     let currRow = height - 1;
