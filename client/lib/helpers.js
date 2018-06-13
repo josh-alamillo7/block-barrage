@@ -222,7 +222,6 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
       color: color,
       score: score
     }
-
   }).filter(info => {
     return info.score > 0
   })
@@ -249,8 +248,34 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
     }
   }
 
-  const addNewDroppedBlocks = (array, row, column) => {
-    
+  const addNewDroppedBlocks = (array, grid, row, column) => {
+    let currRow = row;
+    let newBlock = {};
+    let previousColor = null;
+
+    while(grid[[currRow, column]] !== 'delete me' && grid[[currRow, column]] !== 'silver' && grid[[currRow, column]] !== undefined) {
+      if (grid[[currRow, column]] !== previousColor) {
+        if (Object.keys(newBlock).length > 0) {
+          array.push(newBlock);
+        }
+        newBlock = {}
+        newBlock['firstPos'] = currRow;
+        newBlock['lastPos'] = currRow;
+        newBlock['color'] = grid[[currRow, column]];
+        previousColor = grid[[currRow, column]];
+      } else {
+        newBlock['firstPos'] = currRow;
+        array.push(newBlock);
+        newBlock = {};
+      }
+
+      currRow--
+    }
+
+    if (Object.keys(newBlock).length > 0) {
+      array.push(newBlock)
+    }
+    //if there is a newBlock, push it into the array
   }
 
 
@@ -265,8 +290,8 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
       while(grid[[currRow, column]] === 'delete me') {
         moveAllColBlocksDownOne(grid, currRow, column)
       }
-      // findNewDroppedBlocks(newDroppedBlocks, currRow, column)
-      // currRow++
+      addNewDroppedBlocks(newDroppedBlocks, grid, currRow, column)
+      currRow--
     }
   })
 
@@ -286,13 +311,22 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
       scoreInfo: {
         crushDisplays: [],
         multiplier: 1,
-        totalScore: currentScore,
+        totalScore: currentScore
       },
       droppedBlocks: [],
       action: 'create'
     }
   } else {
-    console.log('no longer zero')
+    return {
+      grid: grid,
+      scoreInfo: {
+        crushDisplays: outputScoreInfo,
+        multiplier: multiplier + 1,
+        totalScore: currentScore + score
+      },
+      droppedBlocks: newDroppedBlocks,
+      action: 'score'
+    }
   } 
 
 }

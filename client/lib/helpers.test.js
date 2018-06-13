@@ -104,5 +104,16 @@ test('scoreGrid should return ??? if there are scoring positions', () => {
   let matchResult = helpers.scoreGrid(testGrid, 1, [{color: 'green', column: 0, firstPos: 0, lastPos: 1},
     {color: 'blue', column: 0, firstPos: 2, lastPos: 3}], 4, 8)
 
-  expect(1).toBe(1);
+  expect(matchResult.scoreInfo.multiplier).toBe(2);
+  expect(matchResult.scoreInfo.totalScore).toBe(5);
+  expect(matchResult.scoreInfo.crushDisplays[0]).toEqual({
+    color: 'blue',
+    score: 1
+  });
+  expect(matchResult.droppedBlocks[0]).toEqual({
+    color: 'green',
+    firstPos: 4,
+    lastPos: 5
+  });
+  expect(matchResult.action).toBe('score')
 }) 
