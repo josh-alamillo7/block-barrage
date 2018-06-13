@@ -134,13 +134,7 @@ const dropBlock = (grid, currentBlock) => {
 
 }
 
-
-
-
-const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
-
-  console.log(droppedBlocks[0])
-  console.log(droppedBlocks[1])
+const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
 
   const Queue = function() {
     this.storage = {};
@@ -171,87 +165,170 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore) => {
   }
 
   const checkedPositions = {};
-  const removedPositions = [];
-  let score;
-  let color;
-  let rowValue;
-  let colValue;
-  let queue;
-  let currPosition;
+  const newDroppedBlocks = [];
+  let colsToProcess = [];
+  let removals = [];
+  let score, color, rowValue, colValue, queue, currPosition, potentialRemovals;
 
   const outputScoreInfo = droppedBlocks.map(block => {
     color = grid[[block.firstPos,block.column]];
     score = 0;
     queue = new Queue();
-    if (block.firstPos !== block.lastPos) {
-      if (checkedPositions[[block.lastPos, block.column]] !== true) {
-        queue.enqueue([block.lastPos, block.column])
-        checkedPositions[[block.lastPos, block.column]] = true;
-      } 
-    }
-    if (checkedPositions[[block.firstPos, block.column]] !== true) {
-      queue.enqueue([block.firstPos, block.column])
-      checkedPositions[[block.firstPos, block.column]] = true;
-    }
+    potentialRemovals = [];
+    // if (block.firstPos !== block.lastPos) {
+    if (checkedPositions[[block.lastPos, block.column]] !== true) {
+      queue.enqueue([block.lastPos, block.column])
+      checkedPositions[[block.lastPos, block.column]] = true;
+    } 
+    // }
+    // if (checkedPositions[[block.firstPos, block.column]] !== true) {
+    //   queue.enqueue([block.firstPos, block.column])
+    //   checkedPositions[[block.firstPos, block.column]] = true;
+    // }
     if (grid[[block.lastPos + 1, block.column]] === color) {
       score ++
-      console.log(color, 'upscore')
     }
     while (queue.size > 0) {
       currPosition = queue.dequeue()
+      potentialRemovals.push(currPosition)
       checkedPositions[currPosition] = true;
       rowValue = currPosition[0];
       colValue = currPosition[1];
       // console.log("CURRPOSITION", currPosition, "BOTTOM", grid[[rowValue + 1, colValue]], "TOP", grid[[rowValue - 1, colValue]])
 
-      if (grid[[rowValue + 1, colValue]] === color && checkedPositions[[rowValue + 1, colValue]] !== true) {
-        queue.enqueue([rowValue + 1, colValue])
-        checkedPositions[[rowValue + 1, colValue]] = true
-      }
       if (grid[[rowValue, colValue + 1]] === color && checkedPositions[[rowValue, colValue + 1]] !== true) {
         score++;
         queue.enqueue([rowValue, colValue + 1])
         checkedPositions[[rowValue, colValue + 1]] = true
       }
-      if (grid[[rowValue - 1, colValue]] === color && checkedPositions[[rowValue - 1, colValue]] !== true) {
-        queue.enqueue([rowValue - 1, colValue])
-        checkedPositions[[rowValue - 1, colValue]] = true
-      }
       if (grid[[rowValue, colValue - 1]] === color && checkedPositions[[rowValue, colValue - 1]] !== true) {
         score++;
         queue.enqueue([rowValue, colValue - 1])
         checkedPositions[[rowValue, colValue - 1]] = true
-      }      
+      } 
+      if (grid[[rowValue - 1, colValue]] === color && checkedPositions[[rowValue - 1, colValue]] !== true) {
+        queue.enqueue([rowValue - 1, colValue])
+        checkedPositions[[rowValue - 1, colValue]] = true
+      }    
+      if (grid[[rowValue + 1, colValue]] === color && checkedPositions[[rowValue + 1, colValue]] !== true) {
+        queue.enqueue([rowValue + 1, colValue])
+        checkedPositions[[rowValue + 1, colValue]] = true
+      }
+    }
+    if (score > 0) {
+      removals = removals.concat(potentialRemovals)
     }
     return {
       color: color,
       score: score
     }
+  }).filter(info => {
+    return info.score > 0
   })
 
-  console.log(outputScoreInfo)
+  //delete all positions marked for removal
+  
 
-  //delete all checked positions
+  removals.forEach(removal => {
+    grid[[removal[0],removal[1]]] = 'delete me'
+    if (!colsToProcess.includes(removal[1])) {
+      colsToProcess.push(removal[1])
+    }
+  })
+
+  const moveAllColBlocksDownOne = (grid, row, column) => {
+    let currRow = row
+    while (grid[[currRow, column]] !== undefined && grid[[currRow, column]] !== 'silver') {
+      if (grid[[currRow - 1, column]] === undefined) {
+        grid[[currRow, column]] = 'silver'
+      } else {
+        grid[[currRow, column]] = grid[[currRow - 1, column]]
+      } 
+      currRow--    
+    }
+  }
+
+  const addNewDroppedBlocks = (array, grid, row, column) => {
+    let currRow = row;
+    let newBlock = {};
+    let previousColor = null;
+
+    while(grid[[currRow, column]] !== 'delete me' && grid[[currRow, column]] !== 'silver' && grid[[currRow, column]] !== undefined) {
+      if (grid[[currRow, column]] !== previousColor) {
+        if (Object.keys(newBlock).length > 0) {
+          array.push(newBlock);
+        }
+        newBlock = {}
+        newBlock['firstPos'] = currRow;
+        newBlock['lastPos'] = currRow;
+        newBlock['color'] = grid[[currRow, column]];
+        newBlock['column'] = column
+        previousColor = grid[[currRow, column]];
+      } else {
+        newBlock['firstPos'] = currRow;
+        array.push(newBlock);
+        newBlock = {};
+      }
+
+      currRow--
+    }
+
+    if (Object.keys(newBlock).length > 0) {
+      array.push(newBlock)
+    }
+    //if there is a newBlock, push it into the array
+  }
+
+  colsToProcess.reverse()
+
+  colsToProcess.forEach(column => {
+    let currRow = height - 1;
+
+    while(grid[[currRow, column]] !== 'delete me' && grid[[currRow, column]] !== 'silver' && grid[[currRow, column]] !== undefined) {
+      currRow--
+    }
+
+    if (grid[[currRow, column]] !== 'silver' && grid[[currRow, column]] !== undefined) {
+      while(grid[[currRow, column]] === 'delete me') {
+        moveAllColBlocksDownOne(grid, currRow, column)
+      }
+      addNewDroppedBlocks(newDroppedBlocks, grid, currRow, column)
+      currRow--
+    }
+  })
+
+  console.log("AFTER")
+  prettyGridPrint(grid, 8, 4)
+  //update the grid with new information
+  //hardest part probably: tell us which blocks will need to be considered in the next go-around.
 
   const addScore = outputScoreInfo.reduce((acc, item) => {
     return acc + item.score
   }, 0)
 
-  console.log("score", addScore)
 
   if (addScore === 0) {
     return {
       grid: grid,
       scoreInfo: {
-        crushDisplays: {},
+        crushDisplays: [],
         multiplier: 1,
-        totalScore: currentScore,
+        totalScore: currentScore
       },
       droppedBlocks: [],
       action: 'create'
     }
   } else {
-    console.log('no longer zero')
+    return {
+      grid: grid,
+      scoreInfo: {
+        crushDisplays: outputScoreInfo,
+        multiplier: multiplier + 1,
+        totalScore: currentScore + (addScore * multiplier)
+      },
+      droppedBlocks: newDroppedBlocks,
+      action: 'score'
+    }
   } 
 
 }

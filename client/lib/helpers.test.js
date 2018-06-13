@@ -1,7 +1,8 @@
 const helpers = require('./helpers')
 const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnAlmostHalfFilledGrid, 
   nonMatchingBottomTwoRowsGrid} = require('./sampleGrids')
-const {topLeftBlock, middleLeftBlock, bottomRightBlock, nonMatchingTopLeftBlock, matchingTopLeftBlock} = require('./sampleBlocks')
+const {topLeftBlock, middleLeftBlock, bottomRightBlock, nonMatchingTopLeftBlock, matchingTopLeftBlock,
+horizMatchSecondColBlock} = require('./sampleBlocks')
 
 
 
@@ -71,9 +72,10 @@ test('dropBlock should return the same grid, no block, and a "score" action in t
 
 test('dropBlock should return a grid with the block dropped and a "drop" action in the state if the block has no block below it', () => {
   let testGrid = Object.assign({}, firstColumnAlmostHalfFilledGrid);
-  helpers.placeBlockAtPosition(testGrid, topLeftBlock);
+  let copyOfTopLeftBlock = Object.assign({}, topLeftBlock)
+  helpers.placeBlockAtPosition(testGrid, copyOfTopLeftBlock);
 
-  let dropResult = helpers.dropBlock(testGrid, topLeftBlock);
+  let dropResult = helpers.dropBlock(testGrid, copyOfTopLeftBlock);
 
   expect(dropResult.grid[[0,0]]).toBe('silver');
   expect(dropResult.grid[[2,0]]).toBe('red');
@@ -86,24 +88,63 @@ test('scoreGrid should return the same score and a "create" action if there are 
   let testGrid = Object.assign({}, nonMatchingBottomTwoRowsGrid)
   helpers.placeBlockAtPosition(testGrid, nonMatchingTopLeftBlock);
 
-  helpers.prettyGridPrint(testGrid, 8, 4)
-
   let nonMatchResult = helpers.scoreGrid(testGrid, 1, [{color: 'blue', column: 0, firstPos: 0, lastPos: 1},
-    {color: 'green', column: 0, firstPos: 2, lastPos: 3}], 4)
+    {color: 'green', column: 0, firstPos: 2, lastPos: 3}], 4, 8)
 
   expect(nonMatchResult.scoreInfo.totalScore).toBe(4);
   expect(nonMatchResult.droppedBlocks.length).toBe(0);
   expect(nonMatchResult.action).toBe('create');
 })
 
-test('scoreGrid should return ??? if there are scoring positions', () => {
+test('scoreGrid should return the appropriate information for a vertical match', () => {
   let testGrid = Object.assign({}, nonMatchingBottomTwoRowsGrid)
   helpers.placeBlockAtPosition(testGrid, matchingTopLeftBlock);
 
-  // helpers.prettyGridPrint(testGrid, 8, 4)
-
   let matchResult = helpers.scoreGrid(testGrid, 1, [{color: 'green', column: 0, firstPos: 0, lastPos: 1},
-    {color: 'blue', column: 0, firstPos: 2, lastPos: 3}], 4)
+    {color: 'blue', column: 0, firstPos: 2, lastPos: 3}], 4, 8)
 
-  expect(1).toBe(1);
+  expect(matchResult.scoreInfo.multiplier).toBe(2);
+  expect(matchResult.scoreInfo.totalScore).toBe(5);
+  expect(matchResult.scoreInfo.crushDisplays[0]).toEqual({
+    color: 'blue',
+    score: 1
+  });
+  expect(matchResult.droppedBlocks[0]).toEqual({
+    color: 'green',
+    column: 0,
+    firstPos: 4,
+    lastPos: 5
+  });
+  expect(matchResult.action).toBe('score')
 }) 
+
+test('scoreGrid should return the appropriate information for a horizontal match', () => {
+  let testGrid = Object.assign({}, nonMatchingBottomTwoRowsGrid);
+  helpers.placeBlockAtPosition(testGrid, topLeftBlock);
+  helpers.placeBlockAtPosition(testGrid, horizMatchSecondColBlock);
+
+  console.log('horiz grid before')
+  helpers.prettyGridPrint(testGrid, 8, 4)
+
+  let horizMatchResult = helpers.scoreGrid(testGrid, 1, [{color: 'orange', column: 1, firstPos: 0, lastPos: 1},
+    {color: 'yellow', column: 1, firstPos: 2, lastPos: 3}], 4, 8)
+
+  expect(horizMatchResult.scoreInfo.multiplier).toBe(2);
+  expect(horizMatchResult.scoreInfo.totalScore).toBe(5);
+  expect(horizMatchResult.scoreInfo.crushDisplays[0]).toEqual({
+    color: 'yellow',
+    score: 1
+  });
+  expect(horizMatchResult.droppedBlocks[0]).toEqual({
+    color: 'red',
+    column: 0,
+    firstPos: 2,
+    lastPos: 3
+  });
+  expect(horizMatchResult.droppedBlocks[1]).toEqual({
+    color: 'orange',
+    column: 1,
+    firstPos: 2,
+    lastPos: 3
+  })
+})

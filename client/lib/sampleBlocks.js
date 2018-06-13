@@ -33,8 +33,16 @@ const matchingTopLeftBlock = {
   secBlockPosition: 2
 }
 
+const horizMatchSecondColBlock = {
+  colorOne: 'orange',
+  colorTwo: 'yellow',
+  column: 1,
+  secBlockPosition: 2
+}
+
 module.exports.topLeftBlock = topLeftBlock;
 module.exports.middleLeftBlock = middleLeftBlock;
 module.exports.bottomRightBlock = bottomRightBlock;
 module.exports.nonMatchingTopLeftBlock = nonMatchingTopLeftBlock;
 module.exports.matchingTopLeftBlock = matchingTopLeftBlock;
+module.exports.horizMatchSecondColBlock = horizMatchSecondColBlock;
