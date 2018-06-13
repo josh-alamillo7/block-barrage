@@ -324,7 +324,7 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
       scoreInfo: {
         crushDisplays: outputScoreInfo,
         multiplier: multiplier + 1,
-        totalScore: currentScore + score
+        totalScore: currentScore + (addScore * multiplier)
       },
       droppedBlocks: newDroppedBlocks,
       action: 'score'

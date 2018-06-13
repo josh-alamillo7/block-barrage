@@ -28,7 +28,7 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(this.handleAction.bind(this), 250)
+    setInterval(this.handleAction.bind(this), 500)
   }
 
   handleAction() {
@@ -59,6 +59,9 @@ class Game extends React.Component {
           action: postScoreInfo.action,
           droppedBlocks: postScoreInfo.droppedBlocks
         })
+        break
+      case 'gameOver':
+        null
         break
     }    
   }
