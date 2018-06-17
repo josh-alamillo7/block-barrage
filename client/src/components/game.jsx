@@ -10,8 +10,9 @@ class Game extends React.Component {
     super(props)
     this.height = 20;
     this.width = 4;
+    this.interval = 'short';
+    this.intervalIdentifier = null;
     this.state = {
-      interval: 200,
       currentBlock: {
         colorOne: null,
         colorTwo: null,
@@ -32,17 +33,27 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(this.handleAction.bind(this), this.state.interval)
+    this.intervalIdentifier = setInterval(this.handleAction.bind(this), 200)
     document.addEventListener('keydown', this.handleKeyPress, false)
   }
 
   handleAction() {
+
     const app = this;
     if (this.state.swap) {
       swapBlockPositions(app.state.grid, app.state.currentBlock);
       app.setState({
         swap: false
       })
+    }
+    if (app.state.action === 'score' && app.interval === 'short') {
+      clearInterval(app.intervalIdentifier);
+      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 200);
+      app.interval = 'long'
+    } else if (app.state.action !== 'score' && app.interval === 'long') {
+      clearInterval(app.intervalIdentifier);
+      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 200);
+      app.interval = 'short'
     }
     switch(app.state.action) {
       case 'create':
@@ -97,10 +108,12 @@ class Game extends React.Component {
       <div>
         <div className = "aboveGridInfoContainer">
         <h1 className = "gameHeader">Block Barrage</h1>
-        <ScoreInfo totalScore={this.state.scoreInfo.totalScore} crushDisplays={this.state.scoreInfo.crushDisplays} multiplier={this.state.scoreInfo.multiplier}/>
         </div>
-        <div className = "gridContainer">
-          <Grid grid={this.state.grid} height={this.height} width={this.width} />
+        <div className = "gridAndScoreContainer">
+          <div className = "gridContainer">
+            <Grid grid={this.state.grid} height={this.height} width={this.width} />
+          </div>
+          <ScoreInfo totalScore={this.state.scoreInfo.totalScore} crushDisplays={this.state.scoreInfo.crushDisplays} multiplier={this.state.scoreInfo.multiplier}/>
         </div>
       </div>
       );

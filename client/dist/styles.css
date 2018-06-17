@@ -3,13 +3,35 @@ body {
 }
 
 .gameHeader {
-  
+  font-family: Arial Rounded MT Bold;
+  text-shadow: 1px 1px;
+}
+
+.totalScore {
+
+  font-family: Arial;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.scoreAdd {
+  font-family: Arial;
 }
 
 .gridContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.gridAndScoreContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.scoreInfoContainer {
+  padding-left: 50px;
+  padding-top: 100px;
 }
 
 .square {

@@ -54,6 +54,42 @@ const lowerBlockOneSpot = (grid, block) => {
   block.secBlockPosition += 1
 }
 
+const swapBlockPositions = (grid, block) => {
+  let colorTwo = block.colorTwo;
+  let colorOne = block.colorOne;
+  block.colorTwo = block.colorOne;
+  block.colorOne = colorTwo;
+  grid[[block.secBlockPosition + 1, block.column]] = colorOne;
+  grid[[block.secBlockPosition, block.column]] = colorOne;
+  grid[[block.secBlockPosition - 1, block.column]] = colorTwo;
+  grid[[block.secBlockPosition - 2, block.column]] = colorTwo;
+}
+
+const moveBlockHoriz = (grid, block, direction) => {
+
+  if (direction === 'left') {
+    directionVector = -1
+  } else {
+    directionVector = 1
+  }
+
+  const newColumn = block.column + directionVector
+
+  if (grid[[block.secBlockPosition + 1, newColumn]] !== 'silver') {
+    console.log('you can\'t go ', direction)
+    return
+  }
+
+  oldColumn = block.column
+  block.column = newColumn;
+  for (let row = block.secBlockPosition - 2; row <= block.secBlockPosition + 1; row++) {
+    grid[[row, newColumn]] = grid[[row, oldColumn]]
+    grid[[row, oldColumn]] = 'silver'
+  }
+
+
+}
+
 const checkIfBlockCanDrop = (grid, column, lowestRow) => {
   
   let rowToCheck = lowestRow + 1
@@ -65,6 +101,9 @@ const genNewBlock = (grid, width) => {
   let checked = {};
   let newBlock = {};
   let possibleColors = ['red', 'white', 'black', 'green', 'yellow', 'blue', 'orange']
+
+  //******CHANGE THIS BACK!!! Temp 5-color game for bug-fixing*********
+  // let possibleColors = ['white', 'green', 'blue', 'purple', 'pink']
   let randomColumn;
 
   while (Object.keys(checked).length < width) {
@@ -85,12 +124,12 @@ const genNewBlock = (grid, width) => {
     }
   }
 
-  const colorOne = possibleColors[Math.floor(Math.random() * 7)]
+  const colorOne = possibleColors[Math.floor(Math.random() * possibleColors.length)]
   let colorTwo = undefined
   let potentialColor
 
   while (colorTwo === undefined) {
-    potentialColor = possibleColors[Math.floor(Math.random() * 7)]
+    potentialColor = possibleColors[Math.floor(Math.random() * possibleColors.length)]
     if (potentialColor !== colorOne) {
       colorTwo = potentialColor
     }
@@ -135,6 +174,8 @@ const dropBlock = (grid, currentBlock) => {
 }
 
 const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
+
+  console.log("DROPPED BLOCKS", droppedBlocks)
 
   const Queue = function() {
     this.storage = {};
@@ -186,7 +227,13 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
     //   checkedPositions[[block.firstPos, block.column]] = true;
     // }
     if (grid[[block.lastPos + 1, block.column]] === color) {
-      score ++
+      score++
+    }
+
+    // lines 231-233 being added because we are not checking above if the block JUST drops, and up normally does not get scored
+    if (grid[[block.firstPos - 1, block.column]] === color) {
+      score++
+      console.log('fix happens regardless')
     }
     while (queue.size > 0) {
       currPosition = queue.dequeue()
@@ -284,21 +331,17 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
   colsToProcess.forEach(column => {
     let currRow = height - 1;
 
-    while(grid[[currRow, column]] !== 'delete me' && grid[[currRow, column]] !== 'silver' && grid[[currRow, column]] !== undefined) {
-      currRow--
-    }
 
-    if (grid[[currRow, column]] !== 'silver' && grid[[currRow, column]] !== undefined) {
-      while(grid[[currRow, column]] === 'delete me') {
-        moveAllColBlocksDownOne(grid, currRow, column)
+    while(grid[[currRow, column]] !== 'silver' && grid[[currRow, column]] !== undefined) {
+      if (grid[[currRow, column]] === 'delete me') {
+        while (grid[[currRow, column]] === 'delete me') {
+          moveAllColBlocksDownOne(grid, currRow, column)
+        }
+        addNewDroppedBlocks(newDroppedBlocks, grid, currRow, column)
       }
-      addNewDroppedBlocks(newDroppedBlocks, grid, currRow, column)
       currRow--
-    }
+    }  
   })
-
-  console.log("AFTER")
-  prettyGridPrint(grid, 8, 4)
   //update the grid with new information
   //hardest part probably: tell us which blocks will need to be considered in the next go-around.
 
@@ -340,3 +383,5 @@ module.exports.placeBlockAtPosition = placeBlockAtPosition;
 module.exports.dropBlock = dropBlock;
 module.exports.prettyGridPrint = prettyGridPrint;
 module.exports.scoreGrid = scoreGrid;
+module.exports.swapBlockPositions = swapBlockPositions;
+module.exports.moveBlockHoriz = moveBlockHoriz;
