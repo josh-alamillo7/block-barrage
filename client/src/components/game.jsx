@@ -52,7 +52,7 @@ class Game extends React.Component {
       app.interval = 'long'
     } else if (app.state.action !== 'score' && app.interval === 'long') {
       clearInterval(app.intervalIdentifier);
-      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 200);
+      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 300);
       app.interval = 'short'
     }
     switch(app.state.action) {
@@ -83,7 +83,7 @@ class Game extends React.Component {
         })
         break
       case 'gameOver':
-        null
+        clearInterval(app.intervalIdentifier)
         break
     }  
     
@@ -95,7 +95,6 @@ class Game extends React.Component {
       app.setState({
         swap: true
       })
-      // swapBlockPositions(app.state.grid, app.state.currentBlock)
     } else if (e.keyCode === 37 && app.state.action === 'drop') {
       moveBlockHoriz(app.state.grid, app.state.currentBlock, 'left')
     } else if (e.keyCode === 39 && app.state.action === 'drop') {
