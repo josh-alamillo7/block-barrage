@@ -40,7 +40,6 @@ const createBlockOnTop = (grid, column, newBlock, colorOne, colorTwo) => {
 }
 
 const placeBlockAtPosition = (grid, block) => {
-
   grid[[block.secBlockPosition - 2,block.column]] = block.colorOne;
   grid[[block.secBlockPosition - 1,block.column]] = block.colorOne;
   grid[[block.secBlockPosition,block.column]] = block.colorTwo;
@@ -57,7 +56,7 @@ const lowerBlockOneSpot = (grid, block) => {
 const swapBlockPositions = (grid, block) => {
   let colorTwo = block.colorTwo;
   let colorOne = block.colorOne;
-  block.colorTwo = block.colorOne;
+  block.colorTwo = colorOne;
   block.colorOne = colorTwo;
   grid[[block.secBlockPosition + 1, block.column]] = colorOne;
   grid[[block.secBlockPosition, block.column]] = colorOne;
@@ -175,8 +174,6 @@ const dropBlock = (grid, currentBlock) => {
 
 const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
 
-  console.log("DROPPED BLOCKS", droppedBlocks)
-
   const Queue = function() {
     this.storage = {};
     this.addIndex = 0;
@@ -216,24 +213,16 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
     score = 0;
     queue = new Queue();
     potentialRemovals = [];
-    // if (block.firstPos !== block.lastPos) {
+
     if (checkedPositions[[block.lastPos, block.column]] !== true) {
       queue.enqueue([block.lastPos, block.column])
       checkedPositions[[block.lastPos, block.column]] = true;
     } 
-    // }
-    // if (checkedPositions[[block.firstPos, block.column]] !== true) {
-    //   queue.enqueue([block.firstPos, block.column])
-    //   checkedPositions[[block.firstPos, block.column]] = true;
-    // }
     if (grid[[block.lastPos + 1, block.column]] === color) {
       score++
     }
-
-    // lines 231-233 being added because we are not checking above if the block JUST drops, and up normally does not get scored
     if (grid[[block.firstPos - 1, block.column]] === color) {
       score++
-      console.log('fix happens regardless')
     }
     while (queue.size > 0) {
       currPosition = queue.dequeue()
@@ -272,9 +261,7 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
   }).filter(info => {
     return info.score > 0
   })
-
   //delete all positions marked for removal
-  
 
   removals.forEach(removal => {
     grid[[removal[0],removal[1]]] = 'delete me'
@@ -343,7 +330,7 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
     }  
   })
   //update the grid with new information
-  //hardest part probably: tell us which blocks will need to be considered in the next go-around.
+  //tell us which blocks will need to be considered in the next go-around.
 
   const addScore = outputScoreInfo.reduce((acc, item) => {
     return acc + item.score
