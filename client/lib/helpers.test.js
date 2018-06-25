@@ -191,8 +191,6 @@ test('crushColumn should return appropriate game information if the column has n
 
     let crushResult = helpers.crushColumn(testGrid, crusher, []);
 
-    helpers.prettyGridPrint(testGrid, 8, 4)
-
     expect(crushResult.state).toBe('score');
     expect(crushResult.droppedBlocks.length).toBe(8);
     expect(crushResult.crusher.currRow).toBe(null);
