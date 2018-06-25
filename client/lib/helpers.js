@@ -369,7 +369,30 @@ const crushLowestBlock = (grid, startRow, endRow, column) => {
 
 const crushColumn = (grid, crusher, droppedBlocks) => {
 
+  let rowPointer = crusher.firstUncrushedRow;
+  const crusherColumn = crusher.column
+  const crusherRow = crusher.currRow
 
+  while(rowPointer > crusherRow) {
+    if (grid[[rowPointer, crusherColumn]] === grid[[rowPointer - 1, crusherColumn]]) {
+      crushLowestBlock(grid, rowPointer, crusher.currRow, crusherColumn)
+      droppedBlocks.push({firstPos: rowPointer, lastPos: rowPointer, column: crusherColumn, color: grid[[rowPointer, crusherColumn]]})
+      return {
+        grid: grid,
+        state: 'crush',
+        crusher: {
+          column: crusherColumn,
+          currRow: crusherRow + 1,
+          firstUncrushedRow: rowPointer - 1 
+        },
+        droppedBlocks: droppedBlocks
+      }
+    }
+    droppedBlocks.push({firstPos: rowPointer, lastPos: rowPointer, column: crusherColumn, color: grid[[rowPointer, crusherColumn]]})
+    rowPointer--
+  }
+
+  //otherwise, case where there is nothing left to be crushed.
 
 }
 
@@ -383,3 +406,4 @@ module.exports.scoreGrid = scoreGrid;
 module.exports.swapBlockPositions = swapBlockPositions;
 module.exports.moveBlockHoriz = moveBlockHoriz;
 module.exports.crushLowestBlock = crushLowestBlock;
+module.exports.crushColumn = crushColumn;

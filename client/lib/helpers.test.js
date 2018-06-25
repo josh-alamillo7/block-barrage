@@ -2,7 +2,7 @@ const helpers = require('./helpers')
 const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnAlmostHalfFilledGrid, 
   nonMatchingBottomTwoRowsGrid} = require('./sampleGrids')
 const {topLeftBlock, middleLeftBlock, bottomRightBlock, nonMatchingTopLeftBlock, matchingTopLeftBlock,
-horizMatchSecondColBlock} = require('./sampleBlocks')
+horizMatchSecondColBlock, middleRightBlockAboveCrushedBlock} = require('./sampleBlocks')
 
 
 
@@ -159,3 +159,29 @@ test('crushLowestBlock should return a grid with the lowest block smashed', () =
   expect(testGrid[[4,3]]).toBe('silver');
 
 })
+
+test('crushColumn should return a crushedGrid and appropriate game state information if there is a block to be crushed',
+  () => {
+    let testGrid = helpers.initializeGrid(8, 4);
+    testGrid[[7,3]] = 'yellow';
+    testGrid[[6,3]] = 'red';
+    helpers.placeBlockAtPosition(testGrid, middleRightBlockAboveCrushedBlock);
+
+    console.log('preCrush');
+    helpers.prettyGridPrint(testGrid, 8, 4);
+    let crusher = {
+      column: 3,
+      currRow: 1,
+      firstUncrushedRow: 7
+    }
+
+    let crushResult = helpers.crushColumn(testGrid, crusher, []);
+
+    console.log('postCrush');
+    helpers.prettyGridPrint(testGrid, 8, 4);
+    
+    expect(crushResult.state).toBe('crush');
+    expect(crushResult.droppedBlocks.length).toBe(3);
+    expect(crushResult.crusher.currRow).toBe(2);
+    expect(crushResult.crusher.firstUncrushedRow).toBe(4);
+  })
