@@ -101,8 +101,6 @@ const genNewBlock = (grid, width) => {
   let newBlock = {};
   let possibleColors = ['red', 'white', 'black', 'green', 'yellow', 'blue', 'orange']
 
-  //******CHANGE THIS BACK!!! Temp 5-color game for bug-fixing*********
-  // let possibleColors = ['white', 'green', 'blue', 'purple', 'pink']
   let randomColumn;
 
   while (Object.keys(checked).length < width) {
@@ -363,6 +361,18 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
 
 }
 
+const crushLowestBlock = (grid, startRow, endRow, column) => {
+  for (let row = startRow; row > endRow; row--) {
+    grid[[row, column]] = grid[[row - 1, column]]
+  }
+}
+
+const crushColumn = (grid, crusher, droppedBlocks) => {
+
+
+
+}
+
 module.exports.return = returnMe;
 module.exports.initializeGrid = initializeGrid;
 module.exports.genNewBlock = genNewBlock;
@@ -372,3 +382,4 @@ module.exports.prettyGridPrint = prettyGridPrint;
 module.exports.scoreGrid = scoreGrid;
 module.exports.swapBlockPositions = swapBlockPositions;
 module.exports.moveBlockHoriz = moveBlockHoriz;
+module.exports.crushLowestBlock = crushLowestBlock;

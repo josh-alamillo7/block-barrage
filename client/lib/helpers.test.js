@@ -123,9 +123,6 @@ test('scoreGrid should return the appropriate information for a horizontal match
   helpers.placeBlockAtPosition(testGrid, topLeftBlock);
   helpers.placeBlockAtPosition(testGrid, horizMatchSecondColBlock);
 
-  console.log('horiz grid before')
-  helpers.prettyGridPrint(testGrid, 8, 4)
-
   let horizMatchResult = helpers.scoreGrid(testGrid, 1, [{color: 'orange', column: 1, firstPos: 0, lastPos: 1},
     {color: 'yellow', column: 1, firstPos: 2, lastPos: 3}], 4, 8)
 
@@ -147,4 +144,18 @@ test('scoreGrid should return the appropriate information for a horizontal match
     firstPos: 2,
     lastPos: 3
   })
+})
+
+test('crushLowestBlock should return a grid with the lowest block smashed', () => {
+  let testGrid = helpers.initializeGrid(8, 4);
+  helpers.placeBlockAtPosition(testGrid, bottomRightBlock);
+
+  helpers.crushLowestBlock(testGrid, 7, 3, 3);
+
+  helpers.prettyGridPrint(testGrid, 8, 4);
+  expect(testGrid[[7,3]]).toBe('yellow');
+  expect(testGrid[[6,3]]).toBe('red');
+  expect(testGrid[[5,3]]).toBe('red');
+  expect(testGrid[[4,3]]).toBe('silver');
+
 })
