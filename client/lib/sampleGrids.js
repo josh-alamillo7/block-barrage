@@ -1,10 +1,11 @@
 const helpers = require('./helpers')
 
 const startingGridHeight = 8
-let firstGrid = helpers.initializeGrid(startingGridHeight, 4)
-let secondGrid = helpers.initializeGrid(startingGridHeight, 4)
-let thirdGrid = helpers.initializeGrid(startingGridHeight, 4)
-let fourthGrid = helpers.initializeGrid(startingGridHeight, 4)
+let firstGrid = helpers.initializeGrid(startingGridHeight, 4);
+let secondGrid = helpers.initializeGrid(startingGridHeight, 4);
+let thirdGrid = helpers.initializeGrid(startingGridHeight, 4);
+let fourthGrid = helpers.initializeGrid(startingGridHeight, 4);
+let fifthGrid = helpers.initializeGrid(startingGridHeight, 4);
 
 const fillColumnWithOneColor = (grid, height, column) => {
   for (let x = 3; x < height; x++) {
@@ -21,6 +22,16 @@ const fillColumnAlmostHalfway = (grid, height, column) => {
 for (let y = 0; y < 3; y++) {
   fillColumnWithOneColor(firstGrid, startingGridHeight, y)
   fillColumnWithOneColor(secondGrid, startingGridHeight, y)
+}
+
+const fillColumnWithCrushedBlocks = (grid, height, column) => {
+  for (let x = 0; x < height; x++) {
+    if (x % 2 === 0) {
+      grid[[x, column]] = 'yellow'
+    } else {
+      grid[[x, column]] = 'blue'
+    }
+  }
 }
 
 const addNonmatchingColorsOnBottomTwoRows = (grid) => {
@@ -47,8 +58,10 @@ const makeGridWithNoMatchesTwo = (grid, height) => {
 fillColumnWithOneColor(secondGrid, startingGridHeight, 3)
 fillColumnAlmostHalfway(thirdGrid, startingGridHeight, 0)
 addNonmatchingColorsOnBottomTwoRows(fourthGrid)
+fillColumnWithCrushedBlocks(fifthGrid, startingGridHeight, 2)
 
 module.exports.threeColumnsFilledGrid = firstGrid;
 module.exports.allColumnsFilledGrid = secondGrid;
 module.exports.firstColumnAlmostHalfFilledGrid = thirdGrid;
 module.exports.nonMatchingBottomTwoRowsGrid = fourthGrid;
+module.exports.oneColumnCrushedBlocksGrid = fifthGrid;

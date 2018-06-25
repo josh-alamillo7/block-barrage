@@ -19,6 +19,13 @@ const bottomRightBlock = {
   secBlockPosition: 6
 }
 
+const middleRightBlockAboveCrushedBlock = {
+  colorOne: 'red',
+  colorTwo: 'yellow',
+  column: 3,
+  secBlockPosition: 4
+}
+
 const nonMatchingTopLeftBlock = {
   colorOne: 'blue',
   colorTwo: 'green',
@@ -46,3 +53,4 @@ module.exports.bottomRightBlock = bottomRightBlock;
 module.exports.nonMatchingTopLeftBlock = nonMatchingTopLeftBlock;
 module.exports.matchingTopLeftBlock = matchingTopLeftBlock;
 module.exports.horizMatchSecondColBlock = horizMatchSecondColBlock;
+module.exports.middleRightBlockAboveCrushedBlock = middleRightBlockAboveCrushedBlock;
