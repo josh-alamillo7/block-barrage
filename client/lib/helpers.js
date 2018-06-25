@@ -392,7 +392,16 @@ const crushColumn = (grid, crusher, droppedBlocks) => {
     rowPointer--
   }
 
-  //otherwise, case where there is nothing left to be crushed.
+  return {
+    grid: grid,
+    state: 'score',
+    crusher: {
+      column: null,
+      currRow: null,
+      firstUncrushedRow: null
+    },
+    droppedBlocks: droppedBlocks
+  }
 
 }
 
