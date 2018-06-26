@@ -3,7 +3,6 @@ const fs = require('fs')
 const path = require('path')
 
 const server = http.createServer((request, response) => {
-  console.log('serving')
 
   let filePath = '/Users/joshalamillo/Desktop/Personal Projects/minigames/block-barrage/client/dist' + request.url
 
