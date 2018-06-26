@@ -1,7 +1,7 @@
 import React from 'react';
 import Column from './column.jsx';
 
-const Grid = ( {grid, height, width} ) => {
+const Grid = ( {grid, height, width, crusher} ) => {
   const allRows = []
   const allColumns = []
 
@@ -14,7 +14,7 @@ const Grid = ( {grid, height, width} ) => {
   }
 
   return allRows.map((row) => {
-    return (<div className='row'><Column grid={grid} row={row} allColumns={allColumns} /></div>)
+    return (<div className='row'><Column grid={grid} row={row} allColumns={allColumns} crusher={crusher} /></div>)
   })
 }
 

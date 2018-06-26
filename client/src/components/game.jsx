@@ -55,11 +55,11 @@ class Game extends React.Component {
     }
     if (app.state.action === 'crush') {
       clearInterval(app.intervalIdentifier);
-      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 1000)
+      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 700)
       app.interval = 'very long'
     } else if (app.state.action === 'score' && (app.interval === 'short' || app.interval === 'very long')) {
       clearInterval(app.intervalIdentifier);
-      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 300);
+      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 400);
       app.interval = 'long'
     } else if (app.state.action !== 'score' && app.interval === 'long') {
       clearInterval(app.intervalIdentifier);
@@ -134,11 +134,13 @@ class Game extends React.Component {
         </div>
         <div className = "gridAndScoreContainer">
           <div className = "gridContainer">
-            <Grid grid={this.state.grid} height={this.height} width={this.width} />
+            <Grid grid={this.state.grid} height={this.height} width={this.width} crusher={this.state.crusher} />
           </div>
           <ScoreInfo totalScore={this.state.scoreInfo.totalScore} crushDisplays={this.state.scoreInfo.crushDisplays} multiplier={this.state.scoreInfo.multiplier}/>
         </div>
+        <div className = "instructions">CONTROLS: ⬅️ / ➡️ : Change block column. Space: Swap block colors.</div>
       </div>
+
     );
   }
 
