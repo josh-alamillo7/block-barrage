@@ -1,8 +1,9 @@
 import React from 'react';
 import reactDOM from 'react-dom';
 import {initializeGrid, genNewBlock, dropBlock, scoreGrid, swapBlockPositions, moveBlockHoriz, crushColumn} from '../../lib/helpers.js';
-import Grid from './grid.jsx'
-import ScoreInfo from './scoreinfo.jsx'
+import Grid from './grid.jsx';
+import ScoreInfo from './scoreinfo.jsx';
+import CrusherInfo from './crusherinfo.jsx';
 
 class Game extends React.Component {
 
@@ -26,7 +27,7 @@ class Game extends React.Component {
         firstUncrushedRow: null
       },
       grid: initializeGrid(this.height, this.width),
-      nextCrusher: 50,
+      nextCrusher: 40,
       swap: false,
       droppedBlocks: [],
       scoreInfo: {
@@ -54,10 +55,11 @@ class Game extends React.Component {
     }
     if (app.state.action === 'crush') {
       clearInterval(app.intervalIdentifier);
-      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 2000)
-    } else if (app.state.action === 'score' && app.interval === 'short') {
+      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 700)
+      app.interval = 'very long'
+    } else if (app.state.action === 'score' && (app.interval === 'short' || app.interval === 'very long')) {
       clearInterval(app.intervalIdentifier);
-      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 200);
+      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 400);
       app.interval = 'long'
     } else if (app.state.action !== 'score' && app.interval === 'long') {
       clearInterval(app.intervalIdentifier);
@@ -127,16 +129,19 @@ class Game extends React.Component {
     return (
       <div>
         <div className = "aboveGridInfoContainer">
-        <h1 className = "gameHeader">Block Barrage</h1>
+          <h1 className = "gameHeader">Block Barrage</h1>
+          <CrusherInfo action={this.state.action} nextCrusher={this.state.nextCrusher} score={this.state.scoreInfo.totalScore} />
         </div>
         <div className = "gridAndScoreContainer">
           <div className = "gridContainer">
-            <Grid grid={this.state.grid} height={this.height} width={this.width} />
+            <Grid grid={this.state.grid} height={this.height} width={this.width} crusher={this.state.crusher} />
           </div>
           <ScoreInfo totalScore={this.state.scoreInfo.totalScore} crushDisplays={this.state.scoreInfo.crushDisplays} multiplier={this.state.scoreInfo.multiplier}/>
         </div>
+        <div className = "instructions">CONTROLS: ⬅️ / ➡️ : Change block column. Space: Swap block colors.</div>
       </div>
-      );
+
+    );
   }
 
 }
