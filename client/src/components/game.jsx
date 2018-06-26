@@ -1,6 +1,6 @@
 import React from 'react';
 import reactDOM from 'react-dom';
-import {initializeGrid, genNewBlock, dropBlock, scoreGrid, swapBlockPositions, moveBlockHoriz} from '../../lib/helpers.js';
+import {initializeGrid, genNewBlock, dropBlock, scoreGrid, swapBlockPositions, moveBlockHoriz, crushColumn} from '../../lib/helpers.js';
 import Grid from './grid.jsx'
 import ScoreInfo from './scoreinfo.jsx'
 
@@ -13,27 +13,33 @@ class Game extends React.Component {
     this.interval = 'short';
     this.intervalIdentifier = null;
     this.state = {
+      action: 'create',
       currentBlock: {
         colorOne: null,
         colorTwo: null,
         column: null,
         secBlockPosition: null,
       },
+      crusher: {
+        currRow: null,
+        column: null,
+        firstUncrushedRow: null
+      },
       grid: initializeGrid(this.height, this.width),
+      nextCrusher: 50,
       swap: false,
       droppedBlocks: [],
       scoreInfo: {
         crushDisplays: [],
         multiplier: 1,
         totalScore: 0,
-      },
-      action: 'create'
+      }
     }
     this.handleKeyPress = this.handleKeyPress.bind(this)
   }
 
   componentDidMount() {
-    this.intervalIdentifier = setInterval(this.handleAction.bind(this), 200)
+    this.intervalIdentifier = setInterval(this.handleAction.bind(this), 150)
     document.addEventListener('keydown', this.handleKeyPress, false)
   }
 
@@ -46,13 +52,16 @@ class Game extends React.Component {
         swap: false
       })
     }
-    if (app.state.action === 'score' && app.interval === 'short') {
+    if (app.state.action === 'crush') {
+      clearInterval(app.intervalIdentifier);
+      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 2000)
+    } else if (app.state.action === 'score' && app.interval === 'short') {
       clearInterval(app.intervalIdentifier);
       app.intervalIdentifier = setInterval(app.handleAction.bind(app), 200);
       app.interval = 'long'
     } else if (app.state.action !== 'score' && app.interval === 'long') {
       clearInterval(app.intervalIdentifier);
-      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 300);
+      app.intervalIdentifier = setInterval(app.handleAction.bind(app), 150);
       app.interval = 'short'
     }
     switch(app.state.action) {
@@ -64,22 +73,34 @@ class Game extends React.Component {
           action: newInfo.action
         })
         break
+      case 'crush':
+        let postCrushInfo = crushColumn(app.state.grid, app.state.crusher, app.state.droppedBlocks)
+        app.setState({
+          grid: postCrushInfo.grid,
+          action: postCrushInfo.action,
+          crusher: postCrushInfo.crusher,
+          droppedBlocks: postCrushInfo.droppedBlocks
+        })
+        break
       case 'drop':
         let postDropInfo = dropBlock(app.state.grid, app.state.currentBlock)
         app.setState({
           grid: postDropInfo.grid,
           currentBlock: postDropInfo.currentBlock,
           action: postDropInfo.action,
-          droppedBlocks: postDropInfo.droppedBlocks
+          droppedBlocks: postDropInfo.droppedBlocks,
         })
         break
       case 'score':
-        let postScoreInfo = scoreGrid(app.state.grid, app.state.scoreInfo.multiplier, app.state.droppedBlocks, app.state.scoreInfo.totalScore, app.height)
+        let postScoreInfo = scoreGrid(app.state.grid, app.state.scoreInfo.multiplier, app.state.droppedBlocks, 
+          app.state.scoreInfo.totalScore, app.height, app.width, app.state.nextCrusher)
         app.setState({
           grid: postScoreInfo.grid,
+          nextCrusher: postScoreInfo.nextCrusherScore,
           scoreInfo: postScoreInfo.scoreInfo,
           action: postScoreInfo.action,
-          droppedBlocks: postScoreInfo.droppedBlocks
+          droppedBlocks: postScoreInfo.droppedBlocks,
+          crusher: postScoreInfo.crusher
         })
         break
       case 'gameOver':
