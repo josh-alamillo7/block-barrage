@@ -141,6 +141,24 @@ const genNewBlock = (grid, width) => {
   }
 }
 
+const genCrusher = (grid, width, height) => {
+  let rowPointer = -1;
+  const randomColumn = Math.floor(Math.random() * width);
+
+  while (rowPointer < height - 1) {
+    if (grid[[rowPointer + 1, randomColumn]] !== 'silver') {
+      break
+    }
+    rowPointer++
+  }
+
+  return {
+    column: randomColumn,
+    currRow: rowPointer,
+    firstUncrushedRow: height - 1
+  }
+}
+
 const dropBlock = (grid, currentBlock) => {
 
   const blockColumn = currentBlock['column'];
@@ -170,7 +188,7 @@ const dropBlock = (grid, currentBlock) => {
 
 }
 
-const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
+const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height, width, nextCrusherScore) => {
 
   const Queue = function() {
     this.storage = {};
@@ -334,14 +352,36 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
     return acc + item.score
   }, 0)
 
+  const totalScore = currentScore + (addScore * multiplier);
 
   if (addScore === 0) {
+    if (totalScore >= nextCrusherScore) {
+      //generate crusher function
+      return {
+        grid: grid,
+        nextCrusherScore: nextCrusherScore + 50,
+        scoreInfo: {
+          crushDisplays: [],
+          multiplier: 1,
+          totalScore: currentScore
+        },
+        crusher: genCrusher(grid, width, height),
+        droppedBlocks: [],
+        action: 'crush'
+      }
+    }
     return {
       grid: grid,
+      nextCrusherScore: nextCrusherScore,
       scoreInfo: {
         crushDisplays: [],
         multiplier: 1,
         totalScore: currentScore
+      },
+      crusher: {
+        column: null,
+        currRow: null,
+        firstUncrushedRow: null
       },
       droppedBlocks: [],
       action: 'create'
@@ -349,10 +389,16 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
   } else {
     return {
       grid: grid,
+      nextCrusherScore: nextCrusherScore,
       scoreInfo: {
         crushDisplays: outputScoreInfo,
         multiplier: multiplier + 1,
         totalScore: currentScore + (addScore * multiplier)
+      },
+      crusher: {
+        column: null,
+        currRow: null,
+        firstUncrushedRow: null
       },
       droppedBlocks: newDroppedBlocks,
       action: 'score'
@@ -362,16 +408,21 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height) => {
 }
 
 const crushLowestBlock = (grid, startRow, endRow, column) => {
+
   for (let row = startRow; row > endRow; row--) {
-    grid[[row, column]] = grid[[row - 1, column]]
+    if (row === 0) {
+      grid[row, column] = 'silver'
+    } else {
+      grid[[row, column]] = grid[[row - 1, column]]
+    }    
   }
 }
 
 const crushColumn = (grid, crusher, droppedBlocks) => {
 
   let rowPointer = crusher.firstUncrushedRow;
-  const crusherColumn = crusher.column
-  const crusherRow = crusher.currRow
+  const crusherColumn = crusher.column;
+  const crusherRow = crusher.currRow;
 
   while(rowPointer > crusherRow) {
     if (grid[[rowPointer, crusherColumn]] === grid[[rowPointer - 1, crusherColumn]]) {
@@ -379,7 +430,7 @@ const crushColumn = (grid, crusher, droppedBlocks) => {
       droppedBlocks.push({firstPos: rowPointer, lastPos: rowPointer, column: crusherColumn, color: grid[[rowPointer, crusherColumn]]})
       return {
         grid: grid,
-        state: 'crush',
+        action: 'crush',
         crusher: {
           column: crusherColumn,
           currRow: crusherRow + 1,
@@ -394,7 +445,7 @@ const crushColumn = (grid, crusher, droppedBlocks) => {
 
   return {
     grid: grid,
-    state: 'score',
+    action: 'score',
     crusher: {
       column: null,
       currRow: null,
