@@ -2,9 +2,24 @@ body {
   background-image: url("clouds.jpg");
 }
 
+.crusherInfo {
+  font-family: 'Oxygen', sans-serif;
+}
+
 .gameHeader {
   font-family: Arial Rounded MT Bold;
   text-shadow: 1px 1px;
+
+}
+
+.aboveGridInfoContainer {
+  text-align: center;
+}
+
+.instructions {
+  font-family: 'Arvo', serif;
+  font-size: 20px;
+  text-align: center;
 }
 
 .totalScore {
@@ -37,6 +52,7 @@ body {
   display: inline-block;
   width: 60px;
   height: 30px;
+  font-size: 30px;
 }
 
 .row {

@@ -359,7 +359,7 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height, width,
       //generate crusher function
       return {
         grid: grid,
-        nextCrusherScore: nextCrusherScore + 50,
+        nextCrusherScore: nextCrusherScore + 40,
         scoreInfo: {
           crushDisplays: [],
           multiplier: 1,
@@ -411,7 +411,7 @@ const crushLowestBlock = (grid, startRow, endRow, column) => {
 
   for (let row = startRow; row > endRow; row--) {
     if (row === 0) {
-      grid[row, column] = 'silver'
+      grid[[row, column]] = 'silver'
     } else {
       grid[[row, column]] = grid[[row - 1, column]]
     }    

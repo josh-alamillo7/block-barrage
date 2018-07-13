@@ -1,4 +1,5 @@
 # block-barrage
 
 ## How to run
--To run, simply drag index.html into your browser and start playing! A few UI/visual features are still on their way but all the game functionality is complete.
+1. ```npm run build```
+2. Drag index.html into your browser and get started!
