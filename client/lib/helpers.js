@@ -3,6 +3,7 @@ const returnMe = (item) => {
 }
 
 const initializeGrid = (height, width) => {
+//Initialize a blank grid, for use with tests and to start the initial game grid.
   const output = {}
 
   for (let i = 0; i < height; i++) {
@@ -15,6 +16,7 @@ const initializeGrid = (height, width) => {
 }
 
 const prettyGridPrint = (grid, height, width) => {
+//Prints a grid into the terminal. Used by tests for easier debugging.
   let string = ''
 
   for (let i = 0; i < height; i++) {
@@ -31,6 +33,9 @@ const prettyGridPrint = (grid, height, width) => {
 }
 
 const createBlockOnTop = (grid, column, newBlock, colorOne, colorTwo) => {
+  //Happens when new block properties are decided on by genNewBlock. 
+  //Takes in a grid and new block information to create a new block and updates the grid
+  //accordingly.
   newBlock['colorOne'] = colorOne;
   newBlock['colorTwo'] = colorTwo;
   grid[[0,column]] = colorOne;
@@ -40,6 +45,7 @@ const createBlockOnTop = (grid, column, newBlock, colorOne, colorTwo) => {
 }
 
 const placeBlockAtPosition = (grid, block) => {
+  //Used by tests to simplify placing blocks on test grids.
   grid[[block.secBlockPosition - 2,block.column]] = block.colorOne;
   grid[[block.secBlockPosition - 1,block.column]] = block.colorOne;
   grid[[block.secBlockPosition,block.column]] = block.colorTwo;
@@ -47,6 +53,8 @@ const placeBlockAtPosition = (grid, block) => {
 }
 
 const lowerBlockOneSpot = (grid, block) => {
+  //used by the drop function. Takes in block information and lowers that block one 
+  //row, updating the game grid accordingly.
   grid[[block.secBlockPosition - 2,block.column]] = 'silver';
   grid[[block.secBlockPosition,block.column]] = block.colorOne;
   grid[[block.secBlockPosition + 2,block.column]] = block.colorTwo;
@@ -54,6 +62,8 @@ const lowerBlockOneSpot = (grid, block) => {
 }
 
 const swapBlockPositions = (grid, block) => {
+  //used for the player space keydown effect. Takes in a block, swapping its color positions.
+  //Updates the game grid accordingly.
   let colorTwo = block.colorTwo;
   let colorOne = block.colorOne;
   block.colorTwo = colorOne;
@@ -65,6 +75,10 @@ const swapBlockPositions = (grid, block) => {
 }
 
 const moveBlockHoriz = (grid, block, direction) => {
+
+  //used for the player left/right arrow keydown effect. Takes in a block, checks if it
+  //can move that direction, and if it can, moves the block in that direction. Updates
+  //the game grid accordingly.
 
   if (direction === 'left') {
     directionVector = -1
@@ -90,13 +104,19 @@ const moveBlockHoriz = (grid, block, direction) => {
 }
 
 const checkIfBlockCanDrop = (grid, column, lowestRow) => {
+
+  //returns a boolean representing whether the block is able to drop one spot; that is,
+  //it will return false if the block already has a block before it, or if the block
+  //is at the bottom of the grid.
   
   let rowToCheck = lowestRow + 1
   return grid[[rowToCheck,column]] === 'silver'
 }
 
 const genNewBlock = (grid, width) => {
-  //choose a random column and check its color
+  //finds an available column that can fit a new block, and if there is one available,
+  //generates a new block at the top of that column. If there are no rows available,
+  //it returns a game over state.
   let checked = {};
   let newBlock = {};
   let possibleColors = ['red', 'white', 'black', 'green', 'yellow', 'blue', 'orange']
@@ -142,6 +162,8 @@ const genNewBlock = (grid, width) => {
 }
 
 const genCrusher = (grid, width, height) => {
+  //generates a crusher on a random column, initializing its position to be directly on
+  //top of the highest existing block on that column.
   let rowPointer = -1;
   const randomColumn = Math.floor(Math.random() * width);
 
@@ -160,7 +182,10 @@ const genCrusher = (grid, width, height) => {
 }
 
 const dropBlock = (grid, currentBlock) => {
-
+  
+  //checks if a block can drop. If it can, it drops the block one spot on that column.
+  //Otherwise, tells the game to start scoring.
+  
   const blockColumn = currentBlock['column'];
   const lowestRow = currentBlock['secBlockPosition'] + 1;
 
@@ -189,6 +214,18 @@ const dropBlock = (grid, currentBlock) => {
 }
 
 const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height, width, nextCrusherScore) => {
+
+  //takes in an array of droppedBlocks, and does a breadth-first search from each of those
+  //blocks to find all matching colors.
+  //It marks all of these matched color blocks for deletion, keeps track of the score info,
+  //then column-by-column, deletes the color blocks marked for deletion.
+  //Every time a block is "deleted", the blocks above it are dropped, and all must now
+  //be checked in the next scoring iteration, so they are added to droppedBlocks.
+  
+  //if there were no dropped blocks the game is done scoring.
+  	//if the player has reached the next score threshold for getting a crusher, the game
+  	//returns a crush action.
+  	//Otherwise, the function tells the game to generate a new block.
 
   const Queue = function() {
     this.storage = {};
@@ -409,6 +446,9 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height, width,
 
 const crushLowestBlock = (grid, startRow, endRow, column) => {
 
+  //finds the lowest block taking up more than two rows, reduces it to one row, and drops
+  //all blocks above it.
+
   for (let row = startRow; row > endRow; row--) {
     if (row === 0) {
       grid[[row, column]] = 'silver'
@@ -418,7 +458,10 @@ const crushLowestBlock = (grid, startRow, endRow, column) => {
   }
 }
 
-const crushColumn = (grid, crusher, droppedBlocks) => {
+const crushColumn = (grid, crusher, droppedBlocks) => { 
+  //takes in a column and, one by one, crushes all two-row blocks into one-row blocks.
+  //all blocks in the new column must now be checked for scoring, so the function always
+  //returns a score action with the crushed blocks as droppedBlocks.
 
   let rowPointer = crusher.firstUncrushedRow;
   const crusherColumn = crusher.column;
