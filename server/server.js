@@ -2,6 +2,8 @@ const http = require('http')
 const fs = require('fs')
 const path = require('path')
 
+const port = process.env.PORT || 3330
+
 const server = http.createServer((request, response) => {
 
   let filePath = '/Users/joshalamillo/Desktop/Personal Projects/minigames/block-barrage/client/dist' + request.url
@@ -29,6 +31,6 @@ const server = http.createServer((request, response) => {
 
 })
 
-server.listen(3330, function() {
+server.listen(port, function() {
   console.log('listening on port 3330...')
 })
