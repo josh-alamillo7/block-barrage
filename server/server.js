@@ -6,7 +6,9 @@ const port = process.env.PORT || 3330
 
 const server = http.createServer((request, response) => {
 
-  let filePath = '/Users/joshalamillo/Desktop/Personal Projects/minigames/block-barrage/client/dist' + request.url
+  let filePath = path.join(__dirname, '../client/dist') + request.url
+
+  //let filePath = '/Users/joshalamillo/Desktop/Personal Projects/minigames/block-barrage/client/dist' + request.url
 
 
   if (request.url == '/') {
