@@ -1,3 +1,5 @@
+const { Queue } = require('./queue');
+
 const returnMe = (item) => {
   return item
 }
@@ -100,8 +102,8 @@ const moveBlockHoriz = (grid, block, direction) => {
     grid[[row, oldColumn]] = 'silver'
   }
 
-
 }
+
 
 const checkIfBlockCanDrop = (grid, column, lowestRow) => {
 
@@ -143,7 +145,7 @@ const genNewBlock = (grid, width) => {
 
   const colorOne = possibleColors[Math.floor(Math.random() * possibleColors.length)]
   let colorTwo = undefined
-  let potentialColor
+  let potentialColor;
 
   while (colorTwo === undefined) {
     potentialColor = possibleColors[Math.floor(Math.random() * possibleColors.length)]
@@ -152,7 +154,7 @@ const genNewBlock = (grid, width) => {
     }
   }
 
-  createBlockOnTop(grid, randomColumn, newBlock, colorOne, colorTwo)
+  createBlockOnTop(grid, randomColumn, newBlock, colorOne, colorTwo);
 
   return {
     grid: grid,
@@ -171,7 +173,7 @@ const genCrusher = (grid, width, height) => {
     if (grid[[rowPointer + 1, randomColumn]] !== 'silver') {
       break
     }
-    rowPointer++
+    rowPointer++;
   }
 
   return {
@@ -223,37 +225,9 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height, width,
   //be checked in the next scoring iteration, so they are added to droppedBlocks.
   
   //if there were no dropped blocks the game is done scoring.
-  	//if the player has reached the next score threshold for getting a crusher, the game
-  	//returns a crush action.
-  	//Otherwise, the function tells the game to generate a new block.
-
-  const Queue = function() {
-    this.storage = {};
-    this.addIndex = 0;
-    this.removeIndex = 0;
-    this.size = 0;
-  }
-
-  Queue.prototype.enqueue = function(value) {
-    this.storage[this.addIndex] = value;
-    this.addIndex++
-    this.size++
-  }
-
-  Queue.prototype.dequeue = function() {
-    if (this.removeIndex === this.addIndex && this.size > 0) {
-      const removedValue = this.storage[this.removeIndex];
-      this.size--;
-      delete this.storage[this.removeIndex];
-      return removedValue
-    } else if (this.size > 0) {
-      const removedValue = this.storage[this.removeIndex];
-      this.size--;
-      delete this.storage[this.removeIndex];
-      this.removeIndex++
-      return removedValue
-    }
-  }
+    //if the player has reached the next score threshold for getting a crusher, the game
+    //returns a crush action.
+    //Otherwise, the function tells the game to generate a new block.
 
   const checkedPositions = {};
   const newDroppedBlocks = [];
@@ -264,6 +238,7 @@ const scoreGrid = (grid, multiplier, droppedBlocks, currentScore, height, width,
   const outputScoreInfo = droppedBlocks.map(block => {
     color = grid[[block.firstPos,block.column]];
     score = 0;
+    console.log(Queue)
     queue = new Queue();
     potentialRemovals = [];
 
