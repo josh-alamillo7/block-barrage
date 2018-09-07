@@ -1,8 +1,8 @@
-const helpers = require('./helpers')
+const helpers = require('./gamefunctions')
 const {threeColumnsFilledGrid, allColumnsFilledGrid, firstColumnAlmostHalfFilledGrid, 
-  nonMatchingBottomTwoRowsGrid, oneColumnCrushedBlocksGrid} = require('./sampleGrids')
+  nonMatchingBottomTwoRowsGrid, oneColumnCrushedBlocksGrid} = require('./testObjects/sampleGrids')
 const {topLeftBlock, middleLeftBlock, bottomRightBlock, nonMatchingTopLeftBlock, matchingTopLeftBlock,
-horizMatchSecondColBlock, middleRightBlockAboveCrushedBlock} = require('./sampleBlocks')
+horizMatchSecondColBlock, middleRightBlockAboveCrushedBlock} = require('./testObjects/sampleBlocks')
 
 
 
