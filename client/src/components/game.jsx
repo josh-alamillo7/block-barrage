@@ -1,6 +1,6 @@
 import React from 'react';
 import reactDOM from 'react-dom';
-import {initializeGrid, genNewBlock, dropBlock, scoreGrid, swapBlockPositions, moveBlockHoriz, crushColumn} from '../../lib/helpers.js';
+import {initializeGrid, genNewBlock, dropBlock, scoreGrid, swapBlockPositions, moveBlockHoriz, crushColumn} from '../../lib/gamefunctions.js';
 import Grid from './grid.jsx';
 import ScoreInfo from './scoreinfo.jsx';
 import CrusherInfo from './crusherinfo.jsx';
